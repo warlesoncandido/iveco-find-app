@@ -61,6 +61,14 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
               title: 'Tipos',
               icon: Icons.type_specimen,
             ),
+            IDrawerItem(
+              selected: widget.controller.selectedIndex == 4,
+              onTap: () {
+                widget.controller.setSelectedIndex(4);
+              },
+              title: 'Fornecedores',
+              icon: Icons.supervised_user_circle_rounded,
+            ),
             Spacer(),
             IDrawerItem(
               selected: widget.controller.selectedIndex == 20,

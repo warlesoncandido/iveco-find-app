@@ -12,7 +12,7 @@ class TypesRepository {
   Future<Either<Failure, PaginationModel>> getTypes({required int page}) async {
     try {
       final result = await dio.get(
-        '/api/v1//tipos-ativo?pagina=$page&tamanhoPagina=25&ordem=asc&q=&incluirInativos=',
+        '/api/v1//tipos-ativo?pagina=$page&tamanhoPagina=25&ordem=asc&q=&incluirInativos=true',
         isAuth: true,
       );
       return Right(

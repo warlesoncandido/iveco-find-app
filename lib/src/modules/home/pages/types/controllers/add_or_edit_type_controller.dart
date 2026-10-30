@@ -12,6 +12,8 @@ class AddOrEditTypeController extends ChangeNotifier {
 
   TypeModel? type;
 
+  bool active = false;
+
   final nameController = TextEditingController();
   final prefixController = TextEditingController();
 
@@ -24,8 +26,14 @@ class AddOrEditTypeController extends ChangeNotifier {
       type = value;
       nameController.text = value.nome;
       prefixController.text = value.prefixo;
+      active = value.ativo;
       notifyListeners();
     }
+  }
+
+  void changeActive(bool value) {
+    active = value;
+    notifyListeners();
   }
 
   Future<void> saveType({
@@ -40,6 +48,7 @@ class AddOrEditTypeController extends ChangeNotifier {
     );
     Either<Failure, bool> result;
     if (type != null) {
+      params.active = active;
       result = await repository.updateType(params, type!.id);
     } else {
       result = await repository.saveType(params);
@@ -61,5 +70,6 @@ class AddOrEditTypeController extends ChangeNotifier {
   void clearFields() {
     nameController.clear();
     prefixController.clear();
+    type = null;
   }
 }

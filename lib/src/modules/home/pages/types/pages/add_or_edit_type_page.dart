@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/add_or_edit_type_controller.dart';
 import 'package:iveco_find/src/shared/components/i_button.dart';
+import 'package:iveco_find/src/shared/components/i_switch.dart';
 import 'package:iveco_find/src/shared/components/i_text_field.dart';
 import 'package:iveco_find/src/shared/models/type_model.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
@@ -73,6 +74,12 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
                       return null;
                     },
                   ),
+                  if (controller.type != null)
+                    ISwitch(
+                      value: controller.active,
+                      onChanged: controller.changeActive,
+                      label: 'Ativo',
+                    ),
                 ],
               ),
             ),

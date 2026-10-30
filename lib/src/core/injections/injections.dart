@@ -3,9 +3,11 @@ import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/supplier/controllers/supplier_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/add_or_edit_type_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/types_controller.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
+import 'package:iveco_find/src/shared/repositories/supplier_repository.dart';
 import 'package:iveco_find/src/shared/repositories/types_repository.dart';
 
 class Injections {
@@ -25,6 +27,9 @@ class Injections {
 
     GetIt.instance.registerSingleton<TypesRepository>(
       TypesRepository(dio: GetIt.instance.get<ClientDio>()),
+    );
+    GetIt.instance.registerSingleton<SupplierRepository>(
+      SupplierRepository(dio: GetIt.instance.get<ClientDio>()),
     );
 
     //CONTROLLER
@@ -49,6 +54,9 @@ class Injections {
       AddOrEditTypeController(
         repository: GetIt.instance.get<TypesRepository>(),
       ),
+    );
+    GetIt.instance.registerSingleton<SupplierController>(
+      SupplierController(repository: GetIt.instance.get<SupplierRepository>()),
     );
   }
 }
