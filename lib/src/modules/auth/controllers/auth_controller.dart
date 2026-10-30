@@ -13,7 +13,7 @@ class AuthController extends ChangeNotifier {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final emailController = TextEditingController(text: 'admin@teste.com');
-  final passwordController = TextEditingController(text: 'Admin@12345');
+  final passwordController = TextEditingController(text: 'Admin@1234');
 
   bool isLoading = false;
 

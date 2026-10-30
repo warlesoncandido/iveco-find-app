@@ -1,0 +1,10 @@
+^C:\USERS\WARLESONSILVA\DOCUMENTS\PROJECTS\OTHERS\IVECO-FIND-APP\BUILD\WINDOWS\X64\CMAKEFILES\D15BE617FEE60552C758149FE7F5B201\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/warlesonsilva/Documents/projects/others/iveco-find-app/windows -BC:/Users/warlesonsilva/Documents/projects/others/iveco-find-app/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/warlesonsilva/Documents/projects/others/iveco-find-app/build/windows/x64/iveco_find.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
