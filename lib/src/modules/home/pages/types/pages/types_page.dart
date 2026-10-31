@@ -45,11 +45,13 @@ class _TypesPageState extends State<TypesPage> {
             },
             child: Icon(Icons.add),
           ),
-          bottom: IPagination(
-            currentPage: controller.currentPage,
-            totalPage: controller.pagination!.calculateTotalPages,
-            onTapPage: controller.setCurrentPage,
-          ),
+          bottom: controller.pagination != null
+              ? IPagination(
+                  currentPage: controller.currentPage,
+                  totalPage: controller.pagination!.calculateTotalPages,
+                  onTapPage: controller.setCurrentPage,
+                )
+              : SizedBox.shrink(),
           child: Padding(
             padding: EdgeInsets.all(md),
             child: Column(

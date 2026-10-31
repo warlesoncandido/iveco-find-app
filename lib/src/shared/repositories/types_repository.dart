@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
 import 'package:iveco_find/src/shared/models/type_model.dart';
@@ -36,8 +37,10 @@ class TypesRepository {
         data: params.toJson(),
       );
       return Right(true);
-    } catch (e) {
-      return Left(Failure(message: 'Falha ao criar tipo.'));
+    } on DioException catch (error) {
+      String message =
+          error.response?.data['detail'] ?? 'Falha ao cadastrar tipo.';
+      return Left(Failure(message: message));
     }
   }
 
@@ -49,8 +52,10 @@ class TypesRepository {
         data: params.toJson(),
       );
       return Right(true);
-    } catch (e) {
-      return Left(Failure(message: 'Falha ao atualizar tipo.'));
+    } on DioException catch (error) {
+      String message =
+          error.response?.data['detail'] ?? 'Falha ao cadastrar tipo.';
+      return Left(Failure(message: message));
     }
   }
 }

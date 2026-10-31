@@ -3,6 +3,7 @@ import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/supplier/controllers/add_or_edit_supplier_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/controllers/supplier_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/add_or_edit_type_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/types_controller.dart';
@@ -57,6 +58,12 @@ class Injections {
     );
     GetIt.instance.registerSingleton<SupplierController>(
       SupplierController(repository: GetIt.instance.get<SupplierRepository>()),
+    );
+
+    GetIt.instance.registerSingleton<AddOrEditSupplierController>(
+      AddOrEditSupplierController(
+        repository: GetIt.instance.get<SupplierRepository>(),
+      ),
     );
   }
 }

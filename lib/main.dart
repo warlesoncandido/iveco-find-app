@@ -5,6 +5,7 @@ import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/modules/auth/auth_module.dart';
 import 'package:iveco_find/src/modules/home/home_module.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/actives_module.dart';
+import 'package:iveco_find/src/modules/home/pages/supplier/supplier_module.dart';
 import 'package:iveco_find/src/modules/home/pages/types/type_module.dart';
 
 void main() {
@@ -40,5 +41,5 @@ class MyApp extends StatelessWidget {
 }
 
 final _router = GoRouter(
-  routes: [authModule, homeModule, activiesModule, typeModule],
+  routes: [authModule, homeModule, activiesModule, typeModule, supplierModule],
 );

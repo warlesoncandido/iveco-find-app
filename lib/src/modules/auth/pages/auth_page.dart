@@ -8,6 +8,8 @@ import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
 import 'package:iveco_find/src/shared/components/i_button.dart';
 import 'package:iveco_find/src/shared/components/i_text_button.dart';
 import 'package:iveco_find/src/shared/components/i_text_field.dart';
+import 'package:iveco_find/src/shared/utils/helpers/platform_helper.dart';
+import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
 import 'package:iveco_find/src/shared/utils/messegers/snackbar_util.dart';
 
 class AuthPage extends StatefulWidget {
@@ -40,18 +42,19 @@ class _AuthPageState extends State<AuthPage> {
       body: Center(
         child: Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(IvecoImages.login),
-                    fit: BoxFit.cover,
+            if (!ScreenHelper.isMobile(context))
+              Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(IvecoImages.login),
+                      fit: BoxFit.cover,
+                    ),
                   ),
+                  child: Container(color: Colors.black.withOpacity(0.5)),
                 ),
-                child: Container(color: Colors.black.withOpacity(0.5)),
               ),
-            ),
             Expanded(
               flex: 1,
               child: ListenableBuilder(

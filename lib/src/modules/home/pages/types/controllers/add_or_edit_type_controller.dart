@@ -38,7 +38,7 @@ class AddOrEditTypeController extends ChangeNotifier {
 
   Future<void> saveType({
     required Function() onSuccess,
-    required Function() onError,
+    required Function(String message) onError,
   }) async {
     behaviour = Behaviour.loading;
     notifyListeners();
@@ -56,7 +56,7 @@ class AddOrEditTypeController extends ChangeNotifier {
 
     result.fold(
       (l) {
-        onError();
+        onError(l.message!);
       },
       (r) {
         onSuccess();

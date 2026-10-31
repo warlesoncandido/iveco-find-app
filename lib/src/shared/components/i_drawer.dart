@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
 
 class IDrawerComponent extends StatefulWidget {
   final HomeController controller;
@@ -17,70 +18,88 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, child) {
-        return Column(
-          children: [
-            Container(
-              height: 100,
-              color: ITheme.colors.primary,
-              child: const Center(
-                child: Text(
-                  'Gestão de ativos',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+        return Drawer(
+          backgroundColor: ITheme.colors.primary,
+          child: Column(
+            children: [
+              Container(
+                height: 100,
+                color: ITheme.colors.primary,
+                child: const Center(
+                  child: Text(
+                    'Gestão de ativos',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
                 ),
               ),
-            ),
-            IDrawerItem(
-              selected: widget.controller.selectedIndex == 0,
-              onTap: () {
-                widget.controller.setSelectedIndex(0);
-              },
-              title: 'Dashboard',
-              icon: Icons.dashboard,
-            ),
-            IDrawerItem(
-              selected: widget.controller.selectedIndex == 1,
-              onTap: () {
-                widget.controller.setSelectedIndex(1);
-              },
-              title: 'Ativos',
-              icon: Icons.inventory,
-            ),
-            IDrawerItem(
-              selected: widget.controller.selectedIndex == 2,
-              onTap: () {
-                widget.controller.setSelectedIndex(2);
-              },
-              title: 'Relatorios',
-              icon: Icons.storage,
-            ),
-            IDrawerItem(
-              selected: widget.controller.selectedIndex == 3,
-              onTap: () {
-                widget.controller.setSelectedIndex(3);
-              },
-              title: 'Tipos',
-              icon: Icons.type_specimen,
-            ),
-            IDrawerItem(
-              selected: widget.controller.selectedIndex == 4,
-              onTap: () {
-                widget.controller.setSelectedIndex(4);
-              },
-              title: 'Fornecedores',
-              icon: Icons.supervised_user_circle_rounded,
-            ),
-            Spacer(),
-            IDrawerItem(
-              selected: widget.controller.selectedIndex == 20,
-              onTap: () => widget.controller.logout(
-                onSuccess: () {
-                  context.pop();
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 0,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(0);
                 },
+                title: 'Dashboard',
+                icon: Icons.dashboard,
               ),
-              title: 'Sair',
-              icon: Icons.exit_to_app,
-            ),
-          ],
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 1,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(1);
+                },
+                title: 'Ativos',
+                icon: Icons.inventory,
+              ),
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 2,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(2);
+                },
+                title: 'Relatorios',
+                icon: Icons.storage,
+              ),
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 3,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(3);
+                },
+                title: 'Tipos',
+                icon: Icons.type_specimen,
+              ),
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 4,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(4);
+                },
+                title: 'Fornecedores',
+                icon: Icons.supervised_user_circle_rounded,
+              ),
+              Spacer(),
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 20,
+                onTap: () => widget.controller.logout(
+                  onSuccess: () {
+                    context.pop();
+                  },
+                ),
+                title: 'Sair',
+                icon: Icons.exit_to_app,
+              ),
+            ],
+          ),
         );
       },
     );

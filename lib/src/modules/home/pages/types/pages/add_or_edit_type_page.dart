@@ -102,13 +102,8 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
                       controller.clearFields();
                       context.pop(true);
                     },
-                    onError: () {
-                      SnackbarUtil.showError(
-                        context,
-                        message: controller.type != null
-                            ? 'Falha ao atualizar.'
-                            : 'Falha ao cadastrar.',
-                      );
+                    onError: (message) {
+                      SnackbarUtil.showError(context, message: message);
                     },
                   );
                 }

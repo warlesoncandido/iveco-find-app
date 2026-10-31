@@ -8,6 +8,7 @@ import 'package:iveco_find/src/modules/home/pages/reports/pages/reports_page.dar
 import 'package:iveco_find/src/modules/home/pages/supplier/pages/supplier_page.dart';
 import 'package:iveco_find/src/modules/home/pages/types/pages/types_page.dart';
 import 'package:iveco_find/src/shared/components/i_drawer.dart';
+import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,15 +22,20 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: ScreenHelper.isMobile(context)
+          ? AppBar(title: Text('Gestão de ativos'))
+          : null,
+      drawer: IDrawerComponent(controller: controller),
       body: Row(
         children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(color: ITheme.colors.primary),
-              child: IDrawerComponent(controller: controller),
+          if (!ScreenHelper.isMobile(context))
+            Expanded(
+              flex: 1,
+              child: Container(
+                decoration: BoxDecoration(color: ITheme.colors.primary),
+                child: IDrawerComponent(controller: controller),
+              ),
             ),
-          ),
           Expanded(
             flex: 3,
             child: PageView(

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:iveco_find/src/core/theme/spaccing.dart';
+import 'package:iveco_find/src/modules/home/pages/supplier/components/supplier_card_component.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/controllers/supplier_controller.dart';
 import 'package:iveco_find/src/shared/components/i_pagination.dart';
+import 'package:iveco_find/src/shared/components/i_text_field.dart';
 import 'package:iveco_find/src/shared/components/i_view.dart';
 
 class SupplierPage extends StatefulWidget {
@@ -27,8 +31,14 @@ class _SupplierPageState extends State<SupplierPage> {
       builder: (context, value) {
         return IView(
           behaviourPage: controller.behaviourpage,
+          onRetry: () => controller.loadSuppliers(),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () async {
+              final result = await context.pushNamed('add-or-edit-supplier');
+              if (result == true) {
+                controller.loadSuppliers();
+              }
+            },
             child: Icon(Icons.add),
           ),
           bottom: controller.pagination != null
@@ -38,7 +48,36 @@ class _SupplierPageState extends State<SupplierPage> {
                   onTapPage: controller.setCurrentPage,
                 )
               : SizedBox.shrink(),
-          child: Column(children: []),
+          child: Padding(
+            padding: EdgeInsets.all(md),
+            child: Column(
+              spacing: md,
+              children: [
+                ITextField(label: 'Pesquisar Fornecedor'),
+
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.suppliers.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.suppliers[index];
+                      return SupplierCardComponent(
+                        item: item,
+                        onTap: () async {
+                          final result = await context.pushNamed(
+                            'add-or-edit-supplier',
+                            extra: item,
+                          );
+                          if (result == true) {
+                            controller.loadSuppliers();
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

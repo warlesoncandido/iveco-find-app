@@ -5,7 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "iveco-find-app",
+            "name": "iveco-find-app-mobile",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define=BASE_URL=http://10.0.2.2:3000"
+            ]
+        },
+        {
+            "name": "iveco-find-app-desktop",
             "request": "launch",
             "type": "dart",
             "toolArgs": [
