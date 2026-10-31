@@ -87,6 +87,17 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
                 title: 'Fornecedores',
                 icon: Icons.supervised_user_circle_rounded,
               ),
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == 5,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(5);
+                },
+                title: 'Localidades',
+                icon: Icons.location_on,
+              ),
               Spacer(),
               IDrawerItem(
                 selected: widget.controller.selectedIndex == 20,

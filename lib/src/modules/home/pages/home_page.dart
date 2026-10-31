@@ -5,6 +5,7 @@ import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/actives_page.dart';
 import 'package:iveco_find/src/modules/home/pages/dashboard/pages/dashboard_page.dart';
 import 'package:iveco_find/src/modules/home/pages/reports/pages/reports_page.dart';
+import 'package:iveco_find/src/modules/home/pages/supplier/location/pages/location_page.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/pages/supplier_page.dart';
 import 'package:iveco_find/src/modules/home/pages/types/pages/types_page.dart';
 import 'package:iveco_find/src/shared/components/i_drawer.dart';
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
                 ReportsPage(),
                 TypesPage(),
                 SupplierPage(),
+                LocationPage(),
               ],
             ),
           ),
