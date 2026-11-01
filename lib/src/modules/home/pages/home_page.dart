@@ -8,6 +8,7 @@ import 'package:iveco_find/src/modules/home/pages/reports/pages/reports_page.dar
 import 'package:iveco_find/src/modules/home/pages/location/pages/location_page.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/pages/supplier_page.dart';
 import 'package:iveco_find/src/modules/home/pages/types/pages/types_page.dart';
+import 'package:iveco_find/src/modules/home/pages/user/pages/user_page.dart';
 import 'package:iveco_find/src/shared/components/i_drawer.dart';
 import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
 
@@ -20,6 +21,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = GetIt.instance.get<HomeController>();
+
+  @override
+  void initState() {
+    controller.loadPerfil();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +57,14 @@ class _HomePageState extends State<HomePage> {
                 TypesPage(),
                 SupplierPage(),
                 LocationPage(),
+                // Só alcançável pelo drawer de ADMINISTRADOR; montado sob
+                // demanda para não chamar a API com outros perfis.
+                ListenableBuilder(
+                  listenable: controller,
+                  builder: (context, child) => controller.isAdmin
+                      ? const UserPage()
+                      : const SizedBox.shrink(),
+                ),
               ],
             ),
           ),

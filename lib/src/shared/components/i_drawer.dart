@@ -98,6 +98,18 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
                 title: 'Localidades',
                 icon: Icons.location_on,
               ),
+              if (widget.controller.isAdmin)
+                IDrawerItem(
+                  selected: widget.controller.selectedIndex == 6,
+                  onTap: () {
+                    if (ScreenHelper.isMobile(context)) {
+                      context.pop();
+                    }
+                    widget.controller.setSelectedIndex(6);
+                  },
+                  title: 'Usuários',
+                  icon: Icons.manage_accounts,
+                ),
               Spacer(),
               IDrawerItem(
                 selected: widget.controller.selectedIndex == 20,

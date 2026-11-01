@@ -16,6 +16,8 @@ import 'package:iveco_find/src/modules/home/pages/location/controllers/location_
 import 'package:iveco_find/src/modules/home/pages/location/controllers/location_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/add_or_edit_type_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/types_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/user/controllers/add_or_edit_user_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/user/controllers/user_controller.dart';
 import 'package:iveco_find/src/shared/repositories/active_repository.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
 import 'package:iveco_find/src/shared/repositories/category_repository.dart';
@@ -23,6 +25,7 @@ import 'package:iveco_find/src/shared/repositories/location_repository.dart';
 import 'package:iveco_find/src/shared/repositories/section_repository.dart';
 import 'package:iveco_find/src/shared/repositories/supplier_repository.dart';
 import 'package:iveco_find/src/shared/repositories/types_repository.dart';
+import 'package:iveco_find/src/shared/repositories/user_repository.dart';
 
 class Injections {
   static void inittialized() {
@@ -56,6 +59,9 @@ class Injections {
     );
     GetIt.instance.registerSingleton<ActiveRepository>(
       ActiveRepository(dio: GetIt.instance.get<ClientDio>()),
+    );
+    GetIt.instance.registerSingleton<UserRepository>(
+      UserRepository(dio: GetIt.instance.get<ClientDio>()),
     );
 
     //CONTROLLER
@@ -139,6 +145,13 @@ class Injections {
       WriteOffActiveController(
         repository: GetIt.instance.get<ActiveRepository>(),
       ),
+    );
+
+    GetIt.instance.registerSingleton<UserController>(
+      UserController(repository: GetIt.instance.get<UserRepository>()),
+    );
+    GetIt.instance.registerSingleton<AddOrEditUserController>(
+      AddOrEditUserController(repository: GetIt.instance.get<UserRepository>()),
     );
   }
 }
