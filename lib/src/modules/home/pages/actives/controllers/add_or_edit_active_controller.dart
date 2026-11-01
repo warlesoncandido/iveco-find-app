@@ -4,7 +4,6 @@ import 'package:iveco_find/src/shared/models/active_model.dart';
 import 'package:iveco_find/src/shared/models/ref_model.dart';
 import 'package:iveco_find/src/shared/params/active_params.dart';
 import 'package:iveco_find/src/shared/repositories/active_repository.dart';
-import 'package:iveco_find/src/shared/repositories/category_repository.dart';
 import 'package:iveco_find/src/shared/repositories/location_repository.dart';
 import 'package:iveco_find/src/shared/repositories/section_repository.dart';
 import 'package:iveco_find/src/shared/repositories/supplier_repository.dart';
@@ -17,7 +16,6 @@ import 'package:iveco_find/src/shared/utils/helpers/money_helper.dart';
 class AddOrEditActiveController extends ChangeNotifier {
   final ActiveRepository repository;
   final TypesRepository typesRepository;
-  final CategoryRepository categoryRepository;
   final LocationRepository locationRepository;
   final SectionRepository sectionRepository;
   final SupplierRepository supplierRepository;
@@ -25,7 +23,6 @@ class AddOrEditActiveController extends ChangeNotifier {
   AddOrEditActiveController({
     required this.repository,
     required this.typesRepository,
-    required this.categoryRepository,
     required this.locationRepository,
     required this.sectionRepository,
     required this.supplierRepository,
@@ -61,10 +58,6 @@ class AddOrEditActiveController extends ChangeNotifier {
   RefModel? location;
   RefModel? section;
   RefModel? supplier;
-
-  /// Categoria não aparece no app por enquanto: o cadastro usa a primeira
-  /// categoria ativa, porque a API exige `categoriaId`.
-  String? defaultCategoryId;
 
   bool get isEditing => active != null;
 
@@ -105,7 +98,6 @@ class AddOrEditActiveController extends ChangeNotifier {
       typesRepository.getSelectableTypes(),
       supplierRepository.getSelectableSuppliers(),
       if (!isEditing) locationRepository.getSelectableLocations(),
-      if (!isEditing) categoryRepository.getSelectableCategories(),
     ]);
 
     if (results.any((e) => e.isLeft())) {
@@ -133,7 +125,6 @@ class AddOrEditActiveController extends ChangeNotifier {
       locations = values[2]
           .map((e) => RefModel(id: e.id, nome: e.nome, ativo: e.ativo))
           .toList();
-      defaultCategoryId = values[3].isNotEmpty ? values[3].first.id : null;
     }
 
     behaviourPage = Behaviour.success;
@@ -187,11 +178,6 @@ class AddOrEditActiveController extends ChangeNotifier {
     required Function(ActiveModel active) onSuccess,
     required Function(String message) onError,
   }) async {
-    if (!isEditing && defaultCategoryId == null) {
-      onError('Nenhuma categoria ativa cadastrada na API.');
-      return;
-    }
-
     behaviour = Behaviour.loading;
     notifyListeners();
 
@@ -203,7 +189,6 @@ class AddOrEditActiveController extends ChangeNotifier {
       serialNumber: _text(serialNumberController),
       patrimony: _text(patrimonyController),
       typeId: type!.id,
-      categoryId: defaultCategoryId,
       brand: _text(brandController),
       model: _text(modelController),
       sectionId: section?.id,
@@ -249,7 +234,6 @@ class AddOrEditActiveController extends ChangeNotifier {
     location = null;
     section = null;
     supplier = null;
-    defaultCategoryId = null;
     sections = [];
   }
 }

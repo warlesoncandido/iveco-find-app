@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
-import 'package:iveco_find/src/modules/home/pages/actives/components/actives_table.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/components/active_card_component.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/actives_controller.dart';
 import 'package:iveco_find/src/shared/components/i_pagination.dart';
 import 'package:iveco_find/src/shared/components/i_select.dart';
@@ -92,10 +92,19 @@ class _ActivesPageState extends State<ActivesPage> {
                     Behaviour.error => ErrorPage(
                       onRetry: controller.loadActives,
                     ),
-                    Behaviour.success => ActivesTable(
-                      items: controller.actives,
-                      onTapRow: (item) => _openDetails(item.id),
-                    ),
+                    Behaviour.success =>
+                      controller.actives.isEmpty
+                          ? Center(child: Text('Nenhum ativo encontrado.'))
+                          : ListView.builder(
+                              itemCount: controller.actives.length,
+                              itemBuilder: (context, index) {
+                                final item = controller.actives[index];
+                                return ActiveCardComponent(
+                                  item: item,
+                                  onTap: () => _openDetails(item.id),
+                                );
+                              },
+                            ),
                   },
                 ),
               ],

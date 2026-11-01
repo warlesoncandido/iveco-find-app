@@ -9,7 +9,7 @@ class ActiveModel {
   final String? numeroSerie;
   final String? patrimonio;
   final RefModel tipoAtivo;
-  final RefModel categoria;
+  final RefModel? categoria;
   final RefModel? subcategoria;
   final String? marca;
   final String? modelo;
@@ -67,7 +67,9 @@ class ActiveModel {
       numeroSerie: json['numeroSerie'] as String?,
       patrimonio: json['patrimonio'] as String?,
       tipoAtivo: RefModel.fromJson(json['tipoAtivo']),
-      categoria: RefModel.fromJson(json['categoria']),
+      categoria: json['categoria'] != null
+          ? RefModel.fromJson(json['categoria'])
+          : null,
       subcategoria: json['subcategoria'] != null
           ? RefModel.fromJson(json['subcategoria'])
           : null,

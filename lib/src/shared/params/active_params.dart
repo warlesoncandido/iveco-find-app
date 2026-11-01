@@ -4,7 +4,6 @@ class ActiveParams {
   String? serialNumber;
   String? patrimony;
   String typeId;
-  String? categoryId;
   String? brand;
   String? model;
   String? sectionId;
@@ -22,7 +21,6 @@ class ActiveParams {
     this.serialNumber,
     this.patrimony,
     required this.typeId,
-    this.categoryId,
     this.brand,
     this.model,
     this.sectionId,
@@ -35,8 +33,8 @@ class ActiveParams {
     this.version,
   });
 
-  /// No cadastro vão o Setor e a Categoria; na alteração vai a versão (o Setor
-  /// só muda por Movimentação e a Categoria, fora do app por enquanto, não muda).
+  /// No cadastro vai o Setor; na alteração vai a versão (o Setor só muda por
+  /// Movimentação). A Categoria é opcional na API e fica fora do app por enquanto.
   /// Opcionais vazios vão como `null`, que na alteração limpa o campo.
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
@@ -57,7 +55,7 @@ class ActiveParams {
     if (version != null) {
       data.addAll({'versao': version});
     } else {
-      data.addAll({'setorId': sectionId, 'categoriaId': categoryId});
+      data.addAll({'setorId': sectionId});
     }
     return data;
   }

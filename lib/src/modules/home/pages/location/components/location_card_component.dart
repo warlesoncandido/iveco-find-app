@@ -34,7 +34,15 @@ class LocationCardComponent extends StatelessWidget {
                     child: Icon(Icons.location_on),
                   ),
                   SizedBox(width: md),
-                  Text(item.nome, style: ITheme.styles.bodyBold()),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      item.nome,
+                      style: ITheme.styles.bodyBold(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
               InkWell(

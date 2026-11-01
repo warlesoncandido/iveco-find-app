@@ -7,7 +7,7 @@ class ActiveSummaryModel {
   final String nome;
   final ActiveStatus status;
   final RefModel tipoAtivo;
-  final RefModel categoria;
+  final RefModel? categoria;
   final RefModel setor;
   final RefModel localidade;
   final String? responsavel;
@@ -35,7 +35,9 @@ class ActiveSummaryModel {
       nome: json['nome'] as String,
       status: ActiveStatus.fromValue(json['status'] as String),
       tipoAtivo: RefModel.fromJson(json['tipoAtivo']),
-      categoria: RefModel.fromJson(json['categoria']),
+      categoria: json['categoria'] != null
+          ? RefModel.fromJson(json['categoria'])
+          : null,
       setor: RefModel.fromJson(json['setor']),
       localidade: RefModel.fromJson(json['localidade']),
       responsavel: json['responsavel'] as String?,

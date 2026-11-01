@@ -117,7 +117,6 @@ class Injections {
       AddOrEditActiveController(
         repository: GetIt.instance.get<ActiveRepository>(),
         typesRepository: GetIt.instance.get<TypesRepository>(),
-        categoryRepository: GetIt.instance.get<CategoryRepository>(),
         locationRepository: GetIt.instance.get<LocationRepository>(),
         sectionRepository: GetIt.instance.get<SectionRepository>(),
         supplierRepository: GetIt.instance.get<SupplierRepository>(),
