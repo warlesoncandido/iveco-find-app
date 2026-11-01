@@ -5,7 +5,7 @@ import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/modules/auth/auth_module.dart';
 import 'package:iveco_find/src/modules/home/home_module.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/actives_module.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/location_module.dart';
+import 'package:iveco_find/src/modules/home/pages/location/location_module.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/supplier_module.dart';
 import 'package:iveco_find/src/modules/home/pages/types/type_module.dart';
 

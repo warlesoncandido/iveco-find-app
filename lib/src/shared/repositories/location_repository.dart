@@ -63,4 +63,21 @@ class LocationRepository {
       return Left(Failure(message: message));
     }
   }
+
+  /// Só os ativos, para seleção no cadastro de Ativo.
+  Future<Either<Failure, List<LocationModel>>> getSelectableLocations() async {
+    try {
+      final result = await dio.get(
+        '/api/v1/localidades?pagina=1&tamanhoPagina=100&ordem=asc',
+        isAuth: true,
+      );
+      return Right(
+        result.data['itens']
+            .map<LocationModel>((e) => LocationModel.fromJson(e))
+            .toList(),
+      );
+    } catch (e) {
+      return Left(Failure(message: 'Falha ao buscar localidades.'));
+    }
+  }
 }

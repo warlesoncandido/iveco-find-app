@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/controllers/add_or_edit_section_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/location/controllers/add_or_edit_section_controller.dart';
 import 'package:iveco_find/src/shared/components/i_button.dart';
 import 'package:iveco_find/src/shared/components/i_switch.dart';
 import 'package:iveco_find/src/shared/components/i_text_field.dart';

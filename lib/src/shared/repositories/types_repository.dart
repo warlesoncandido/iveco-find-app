@@ -58,4 +58,21 @@ class TypesRepository {
       return Left(Failure(message: message));
     }
   }
+
+  /// Só os ativos, para seleção no cadastro de Ativo.
+  Future<Either<Failure, List<TypeModel>>> getSelectableTypes() async {
+    try {
+      final result = await dio.get(
+        '/api/v1/tipos-ativo?pagina=1&tamanhoPagina=100&ordem=asc',
+        isAuth: true,
+      );
+      return Right(
+        result.data['itens']
+            .map<TypeModel>((e) => TypeModel.fromJson(e))
+            .toList(),
+      );
+    } catch (e) {
+      return Left(Failure(message: 'Falha ao buscar tipos.'));
+    }
+  }
 }

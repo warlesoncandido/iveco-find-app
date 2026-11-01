@@ -3,15 +3,22 @@ import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/actives_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/add_or_edit_active_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/move_active_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/write_off_active_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/controllers/add_or_edit_supplier_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/controllers/supplier_controller.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/controllers/add_or_edit_location_controller.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/controllers/add_or_edit_section_controller.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/controllers/location_controller.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/controllers/location_details_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/location/controllers/add_or_edit_location_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/location/controllers/add_or_edit_section_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/location/controllers/location_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/location/controllers/location_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/add_or_edit_type_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/types_controller.dart';
+import 'package:iveco_find/src/shared/repositories/active_repository.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
+import 'package:iveco_find/src/shared/repositories/category_repository.dart';
 import 'package:iveco_find/src/shared/repositories/location_repository.dart';
 import 'package:iveco_find/src/shared/repositories/section_repository.dart';
 import 'package:iveco_find/src/shared/repositories/supplier_repository.dart';
@@ -43,6 +50,12 @@ class Injections {
     );
     GetIt.instance.registerSingleton<SectionRepository>(
       SectionRepository(dio: GetIt.instance.get<ClientDio>()),
+    );
+    GetIt.instance.registerSingleton<CategoryRepository>(
+      CategoryRepository(dio: GetIt.instance.get<ClientDio>()),
+    );
+    GetIt.instance.registerSingleton<ActiveRepository>(
+      ActiveRepository(dio: GetIt.instance.get<ClientDio>()),
     );
 
     //CONTROLLER
@@ -94,6 +107,38 @@ class Injections {
     GetIt.instance.registerSingleton<AddOrEditSectionController>(
       AddOrEditSectionController(
         repository: GetIt.instance.get<SectionRepository>(),
+      ),
+    );
+
+    GetIt.instance.registerSingleton<ActivesController>(
+      ActivesController(repository: GetIt.instance.get<ActiveRepository>()),
+    );
+    GetIt.instance.registerSingleton<AddOrEditActiveController>(
+      AddOrEditActiveController(
+        repository: GetIt.instance.get<ActiveRepository>(),
+        typesRepository: GetIt.instance.get<TypesRepository>(),
+        categoryRepository: GetIt.instance.get<CategoryRepository>(),
+        locationRepository: GetIt.instance.get<LocationRepository>(),
+        sectionRepository: GetIt.instance.get<SectionRepository>(),
+        supplierRepository: GetIt.instance.get<SupplierRepository>(),
+      ),
+    );
+    GetIt.instance.registerSingleton<ActiveDetailsController>(
+      ActiveDetailsController(
+        repository: GetIt.instance.get<ActiveRepository>(),
+        storage: GetIt.instance.get<LocalStorage>(),
+      ),
+    );
+    GetIt.instance.registerSingleton<MoveActiveController>(
+      MoveActiveController(
+        repository: GetIt.instance.get<ActiveRepository>(),
+        locationRepository: GetIt.instance.get<LocationRepository>(),
+        sectionRepository: GetIt.instance.get<SectionRepository>(),
+      ),
+    );
+    GetIt.instance.registerSingleton<WriteOffActiveController>(
+      WriteOffActiveController(
+        repository: GetIt.instance.get<ActiveRepository>(),
       ),
     );
   }

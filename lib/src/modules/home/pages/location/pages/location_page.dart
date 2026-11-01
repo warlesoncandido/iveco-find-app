@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/components/location_card_component.dart';
-import 'package:iveco_find/src/modules/home/pages/supplier/location/controllers/location_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/location/components/location_card_component.dart';
+import 'package:iveco_find/src/modules/home/pages/location/controllers/location_controller.dart';
 import 'package:iveco_find/src/shared/components/i_pagination.dart';
 import 'package:iveco_find/src/shared/components/i_text_field.dart';
 import 'package:iveco_find/src/shared/components/i_view.dart';
@@ -66,10 +66,8 @@ class _LocationPageState extends State<LocationPage> {
                       final item = controller.locations[index];
                       return LocationCardComponent(
                         item: item,
-                        onTap: () => context.pushNamed(
-                          'location-details',
-                          extra: item,
-                        ),
+                        onTap: () =>
+                            context.pushNamed('location-details', extra: item),
                         onEdit: () async {
                           final result = await context.pushNamed(
                             'add-or-edit-location',
