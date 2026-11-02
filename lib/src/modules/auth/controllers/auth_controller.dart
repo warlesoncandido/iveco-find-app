@@ -17,8 +17,10 @@ class AuthController extends ChangeNotifier {
 
   bool isLoading = false;
 
+  /// `onSuccess` recebe `true` quando o Usuário entrou com Senha Provisória
+  /// e precisa trocá-la antes de usar o app.
   Future<void> auth({
-    required Function() onSuccess,
+    required Function(bool mustChangePassword) onSuccess,
     required Function() onError,
   }) async {
     isLoading = true;
@@ -28,15 +30,15 @@ class AuthController extends ChangeNotifier {
       email: emailController.text,
       password: passwordController.text,
     );
-    result.fold(
-      (l) {
+    await result.fold(
+      (l) async {
         onError();
         isLoading = false;
         notifyListeners();
       },
-      (r) {
-        saveUser(r);
-        onSuccess();
+      (r) async {
+        await saveUser(r);
+        onSuccess(r.needChangePassword);
         isLoading = false;
         notifyListeners();
       },
@@ -44,11 +46,21 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> saveUser(AuthModel auth) async {
-    storage.setString(LocalStorageKeys.auth.name(), json.encode(auth.toJson()));
+    await storage.setString(
+      LocalStorageKeys.auth.name(),
+      json.encode(auth.toJson()),
+    );
   }
 
   Future<bool> isAuthenticated() async {
     final result = await storage.getString(LocalStorageKeys.auth.name());
     return result != null;
+  }
+
+  /// Login salvo ainda com a troca da Senha Provisória pendente.
+  Future<bool> mustChangePassword() async {
+    final result = await storage.getString(LocalStorageKeys.auth.name());
+    if (result == null) return false;
+    return AuthModel.fromJson(json.decode(result)).needChangePassword;
   }
 }

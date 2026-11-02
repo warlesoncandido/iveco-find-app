@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
 final _router = GoRouter(
   routes: [
     authModule,
+    changePasswordModule,
     homeModule,
     activiesModule,
     typeModule,

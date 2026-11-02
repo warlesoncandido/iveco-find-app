@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
+import 'package:iveco_find/src/modules/auth/controllers/change_password_controller.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/actives_controller.dart';
@@ -67,6 +68,13 @@ class Injections {
     //CONTROLLER
     GetIt.instance.registerSingleton<AuthController>(
       AuthController(
+        repository: GetIt.instance.get<AuthRepository>(),
+        storage: GetIt.instance.get<LocalStorage>(),
+      ),
+    );
+
+    GetIt.instance.registerSingleton<ChangePasswordController>(
+      ChangePasswordController(
         repository: GetIt.instance.get<AuthRepository>(),
         storage: GetIt.instance.get<LocalStorage>(),
       ),
