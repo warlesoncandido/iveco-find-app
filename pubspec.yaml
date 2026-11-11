@@ -18,6 +18,12 @@ dependencies:
   intl:
   shared_preferences: ^2.5.5
   dartz:
+  qr_flutter: ^4.1.0
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  # Transitiva de pdf/printing. image 4.11.0 declara archive ^4.0.9 mas usa API de archive >=4.1,
+  # que o pdf 3.12 limita a <4.1.0: sem este teto a compilação quebra (ZLibDecoder.decodeLazy).
+  image: '>=4.8.0 <4.11.0'
 
 
 dev_dependencies:
