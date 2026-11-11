@@ -48,7 +48,9 @@ class _AuthPageState extends State<AuthPage> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
+                    color: ITheme.colors.background,
+
                     image: DecorationImage(
                       image: AssetImage(IvecoImages.login),
                       fit: BoxFit.cover,

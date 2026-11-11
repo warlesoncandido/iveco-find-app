@@ -6,7 +6,9 @@ import 'package:iveco_find/src/shared/models/type_model.dart';
 
 class TypeCardComponent extends StatelessWidget {
   final TypeModel item;
-  final Function() onTap;
+
+  /// `null` = sem permissão para editar: o ícone some.
+  final Function()? onTap;
   const TypeCardComponent({super.key, required this.item, required this.onTap});
 
   @override
@@ -44,8 +46,10 @@ class TypeCardComponent extends StatelessWidget {
               child: Row(
                 children: [
                   ITag(isActive: item.ativo),
-                  SizedBox(width: md),
-                  Icon(Icons.edit, size: 16),
+                  if (onTap != null) ...[
+                    SizedBox(width: md),
+                    Icon(Icons.edit, size: 16),
+                  ],
                 ],
               ),
             ),

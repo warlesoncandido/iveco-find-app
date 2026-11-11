@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_card_component.dart';
@@ -21,6 +23,10 @@ class ActivesPage extends StatefulWidget {
 class _ActivesPageState extends State<ActivesPage> {
   final controller = GetIt.instance.get<ActivesController>();
 
+  /// Botões de cadastrar/editar só para quem tem `ativos:escrever` (senão a API dá 403).
+  bool get _canManage =>
+      GetIt.instance.get<HomeController>().can(Permission.ativosEscrever);
+
   @override
   void initState() {
     controller.loadActives();
@@ -38,16 +44,20 @@ class _ActivesPageState extends State<ActivesPage> {
       listenable: controller,
       builder: (context, value) {
         return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final result = await context.pushNamed('add-or-edit-active');
-              if (result is String) {
-                controller.loadActives();
-                _openDetails(result);
-              }
-            },
-            child: Icon(Icons.add),
-          ),
+          floatingActionButton: !_canManage
+              ? SizedBox.shrink()
+              : FloatingActionButton(
+                  onPressed: () async {
+                    final result = await context.pushNamed(
+                      'add-or-edit-active',
+                    );
+                    if (result is String) {
+                      controller.loadActives();
+                      _openDetails(result);
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
           bottomNavigationBar: controller.pagination != null
               ? IPagination(
                   currentPage: controller.currentPage,

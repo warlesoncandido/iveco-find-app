@@ -7,7 +7,9 @@ import 'package:iveco_find/src/shared/utils/formatters/formatters.dart';
 
 class SupplierCardComponent extends StatelessWidget {
   final SupplierModel item;
-  final Function() onTap;
+
+  /// `null` = sem permissão para editar: o ícone some.
+  final Function()? onTap;
   const SupplierCardComponent({
     super.key,
     required this.item,
@@ -49,8 +51,10 @@ class SupplierCardComponent extends StatelessWidget {
               child: Row(
                 children: [
                   ITag(isActive: item.ativo),
-                  SizedBox(width: md),
-                  Icon(Icons.edit, size: 16),
+                  if (onTap != null) ...[
+                    SizedBox(width: md),
+                    Icon(Icons.edit, size: 16),
+                  ],
                 ],
               ),
             ),

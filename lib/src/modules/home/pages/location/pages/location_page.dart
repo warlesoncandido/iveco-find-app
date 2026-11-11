@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/location/components/location_card_component.dart';
@@ -19,6 +21,10 @@ class LocationPage extends StatefulWidget {
 class _LocationPageState extends State<LocationPage> {
   final controller = GetIt.instance.get<LocationController>();
 
+  /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
+  bool get _canManage =>
+      GetIt.instance.get<HomeController>().can(Permission.cadastrosGerir);
+
   @override
   void initState() {
     controller.loadLocations();
@@ -36,15 +42,19 @@ class _LocationPageState extends State<LocationPage> {
         return IView(
           behaviourPage: controller.behaviourPage,
           onRetry: () => controller.loadLocations(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final result = await context.pushNamed('add-or-edit-location');
-              if (result == true) {
-                controller.loadLocations();
-              }
-            },
-            child: Icon(Icons.add),
-          ),
+          floatingActionButton: !_canManage
+              ? SizedBox.shrink()
+              : FloatingActionButton(
+                  onPressed: () async {
+                    final result = await context.pushNamed(
+                      'add-or-edit-location',
+                    );
+                    if (result == true) {
+                      controller.loadLocations();
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
           bottom: controller.pagination != null
               ? IPagination(
                   currentPage: controller.currentPage,
@@ -68,15 +78,17 @@ class _LocationPageState extends State<LocationPage> {
                         item: item,
                         onTap: () =>
                             context.pushNamed('location-details', extra: item),
-                        onEdit: () async {
-                          final result = await context.pushNamed(
-                            'add-or-edit-location',
-                            extra: item,
-                          );
-                          if (result == true) {
-                            controller.loadLocations();
-                          }
-                        },
+                        onEdit: !_canManage
+                            ? null
+                            : () async {
+                                final result = await context.pushNamed(
+                                  'add-or-edit-location',
+                                  extra: item,
+                                );
+                                if (result == true) {
+                                  controller.loadLocations();
+                                }
+                              },
                       );
                     },
                   ),

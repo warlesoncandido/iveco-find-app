@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/shared/enums/local_storage_keys.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:iveco_find/src/shared/enums/movement_type.dart';
 import 'package:iveco_find/src/shared/models/active_history_model.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
@@ -32,10 +33,9 @@ class ActiveDetailsController extends ChangeNotifier {
 
   String? perfil;
 
-  /// Consulta só lê; Baixado é terminal e não aceita alteração.
+  /// Alterar exige `ativos:escrever`; Baixado é terminal e não aceita alteração.
   bool get canEdit =>
-      perfil != null &&
-      perfil != 'CONSULTA' &&
+      Permission.forProfile(perfil).contains(Permission.ativosEscrever) &&
       active != null &&
       !active!.isBaixado;
 

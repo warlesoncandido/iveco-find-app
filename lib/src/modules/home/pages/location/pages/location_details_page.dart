@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
@@ -22,6 +24,10 @@ class LocationDetailsPage extends StatefulWidget {
 
 class _LocationDetailsPageState extends State<LocationDetailsPage> {
   final controller = GetIt.instance.get<LocationDetailsController>();
+
+  /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
+  bool get _canManage =>
+      GetIt.instance.get<HomeController>().can(Permission.cadastrosGerir);
 
   @override
   void initState() {
@@ -46,10 +52,12 @@ class _LocationDetailsPageState extends State<LocationDetailsPage> {
       builder: (context, value) {
         return Scaffold(
           appBar: AppBar(title: Text('Detalhes da Localidade')),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => _openSection(),
-            child: Icon(Icons.add),
-          ),
+          floatingActionButton: !_canManage
+              ? SizedBox.shrink()
+              : FloatingActionButton(
+                  onPressed: () => _openSection(),
+                  child: Icon(Icons.add),
+                ),
           bottomNavigationBar: controller.pagination != null
               ? IPagination(
                   currentPage: controller.currentPage,
@@ -107,7 +115,9 @@ class _LocationDetailsPageState extends State<LocationDetailsPage> {
                                 final item = controller.sections[index];
                                 return SectionCardComponent(
                                   item: item,
-                                  onTap: () => _openSection(section: item),
+                                  onTap: !_canManage
+                                      ? null
+                                      : () => _openSection(section: item),
                                 );
                               },
                             ),

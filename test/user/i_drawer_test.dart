@@ -53,4 +53,27 @@ void main() {
     await pumpDrawer(tester, null);
     expect(find.text('Usuários'), findsNothing);
   });
+
+  const leitura = ['Dashboard', 'Ativos', 'Tipos', 'Fornecedores', 'Localidades'];
+
+  for (final perfil in ['ADMINISTRADOR', 'GESTOR', 'OPERACIONAL', 'CONSULTA']) {
+    testWidgets('$perfil vê as telas de leitura e Sair; Relatórios some', (
+      tester,
+    ) async {
+      await pumpDrawer(tester, perfil);
+      for (final title in leitura) {
+        expect(find.text(title), findsOneWidget, reason: title);
+      }
+      expect(find.text('Sair'), findsOneWidget);
+      expect(find.text('Relatorios'), findsNothing);
+    });
+  }
+
+  testWidgets('sem auth salvo só sobra Sair', (tester) async {
+    await pumpDrawer(tester, null);
+    for (final title in [...leitura, 'Usuários', 'Relatorios']) {
+      expect(find.text(title), findsNothing, reason: title);
+    }
+    expect(find.text('Sair'), findsOneWidget);
+  });
 }

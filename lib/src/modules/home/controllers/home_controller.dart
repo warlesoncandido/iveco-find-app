@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/shared/enums/local_storage_keys.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:iveco_find/src/shared/enums/user_profile.dart';
 import 'package:iveco_find/src/shared/models/auth_model.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
@@ -21,6 +22,10 @@ class HomeController extends ChangeNotifier {
   String? perfil;
 
   bool get isAdmin => perfil == UserProfile.administrador.value;
+
+  /// Esconde da UI o que a API recusaria com 403 para o Perfil logado.
+  bool can(Permission permission) =>
+      Permission.forProfile(perfil).contains(permission);
 
   Future<void> loadPerfil() async {
     final auth = await storage.getString(LocalStorageKeys.auth.name());
