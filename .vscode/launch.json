@@ -9,7 +9,9 @@
             "request": "launch",
             "type": "dart",
             "toolArgs": [
-                "--dart-define=BASE_URL=http://10.0.2.2:3000"
+                "--dart-define=BASE_URL=http://10.0.2.2:3000",
+                // URL do QR Code: troque pelo IP desta máquina na rede local (celulares precisam alcançá-lo).
+                "--dart-define=PUBLIC_URL=http://192.168.1.80:3000"
             ]
         },
         {
@@ -17,7 +19,9 @@
             "request": "launch",
             "type": "dart",
             "toolArgs": [
-                "--dart-define=BASE_URL=http://localhost:3000"
+                "--dart-define=BASE_URL=http://localhost:3000",
+                // URL do QR Code: troque pelo IP desta máquina na rede local (celulares precisam alcançá-lo).
+                "--dart-define=PUBLIC_URL=http://192.168.1.80:3000"
             ]
         },
         {

@@ -6,7 +6,9 @@ import 'package:iveco_find/src/shared/models/section_model.dart';
 
 class SectionCardComponent extends StatelessWidget {
   final SectionModel item;
-  final Function() onTap;
+
+  /// `null` = sem permissão para editar: o ícone some.
+  final Function()? onTap;
   const SectionCardComponent({
     super.key,
     required this.item,
@@ -37,8 +39,10 @@ class SectionCardComponent extends StatelessWidget {
               child: Row(
                 children: [
                   ITag(isActive: item.ativo),
-                  SizedBox(width: md),
-                  Icon(Icons.edit, size: 16),
+                  if (onTap != null) ...[
+                    SizedBox(width: md),
+                    Icon(Icons.edit, size: 16),
+                  ],
                 ],
               ),
             ),

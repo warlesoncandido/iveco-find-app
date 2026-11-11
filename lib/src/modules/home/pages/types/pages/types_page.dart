@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/types/components/type_card_component.dart';
@@ -19,6 +21,10 @@ class TypesPage extends StatefulWidget {
 class _TypesPageState extends State<TypesPage> {
   final controller = GetIt.instance.get<TypesController>();
 
+  /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
+  bool get _canManage =>
+      GetIt.instance.get<HomeController>().can(Permission.cadastrosGerir);
+
   @override
   void initState() {
     controller.loadTypes();
@@ -36,15 +42,17 @@ class _TypesPageState extends State<TypesPage> {
         return IView(
           behaviourPage: controller.behaviourPage,
           onRetry: () => controller.loadTypes(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final result = await context.pushNamed('add-or-edit-type');
-              if (result == true) {
-                controller.loadTypes();
-              }
-            },
-            child: Icon(Icons.add),
-          ),
+          floatingActionButton: !_canManage
+              ? SizedBox.shrink()
+              : FloatingActionButton(
+                  onPressed: () async {
+                    final result = await context.pushNamed('add-or-edit-type');
+                    if (result == true) {
+                      controller.loadTypes();
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
           bottom: controller.pagination != null
               ? IPagination(
                   currentPage: controller.currentPage,
@@ -66,15 +74,17 @@ class _TypesPageState extends State<TypesPage> {
                       final item = controller.types[index];
                       return TypeCardComponent(
                         item: item,
-                        onTap: () async {
-                          final result = await context.pushNamed(
-                            'add-or-edit-type',
-                            extra: item,
-                          );
-                          if (result == true) {
-                            controller.loadTypes();
-                          }
-                        },
+                        onTap: !_canManage
+                            ? null
+                            : () async {
+                                final result = await context.pushNamed(
+                                  'add-or-edit-type',
+                                  extra: item,
+                                );
+                                if (result == true) {
+                                  controller.loadTypes();
+                                }
+                              },
                       );
                     },
                   ),

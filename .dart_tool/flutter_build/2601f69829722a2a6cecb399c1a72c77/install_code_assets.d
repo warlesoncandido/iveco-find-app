@@ -1,0 +1,1 @@
+ /Users/warlesoncandido/Documents/development/iveco/iveco_find/.dart_tool/flutter_build/2601f69829722a2a6cecb399c1a72c77/native_assets.json: 

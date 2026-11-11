@@ -2,7 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
+
+const _items = [
+  (
+    index: 0,
+    title: 'Dashboard',
+    icon: Icons.dashboard,
+    permission: Permission.ativosLer,
+  ),
+  (
+    index: 1,
+    title: 'Ativos',
+    icon: Icons.inventory,
+    permission: Permission.ativosLer,
+  ),
+  (
+    index: 3,
+    title: 'Tipos',
+    icon: Icons.type_specimen,
+    permission: Permission.cadastrosLer,
+  ),
+  (
+    index: 4,
+    title: 'Fornecedores',
+    icon: Icons.supervised_user_circle_rounded,
+    permission: Permission.cadastrosLer,
+  ),
+  (
+    index: 5,
+    title: 'Localidades',
+    icon: Icons.location_on,
+    permission: Permission.cadastrosLer,
+  ),
+  (
+    index: 6,
+    title: 'Usuários',
+    icon: Icons.manage_accounts,
+    permission: Permission.usuariosGerir,
+  ),
+];
 
 class IDrawerComponent extends StatefulWidget {
   final HomeController controller;
@@ -32,72 +72,21 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
                   ),
                 ),
               ),
-              IDrawerItem(
-                selected: widget.controller.selectedIndex == 0,
-                onTap: () {
-                  if (ScreenHelper.isMobile(context)) {
-                    context.pop();
-                  }
-                  widget.controller.setSelectedIndex(0);
-                },
-                title: 'Dashboard',
-                icon: Icons.dashboard,
-              ),
-              IDrawerItem(
-                selected: widget.controller.selectedIndex == 1,
-                onTap: () {
-                  if (ScreenHelper.isMobile(context)) {
-                    context.pop();
-                  }
-                  widget.controller.setSelectedIndex(1);
-                },
-                title: 'Ativos',
-                icon: Icons.inventory,
-              ),
-              IDrawerItem(
-                selected: widget.controller.selectedIndex == 2,
-                onTap: () {
-                  if (ScreenHelper.isMobile(context)) {
-                    context.pop();
-                  }
-                  widget.controller.setSelectedIndex(2);
-                },
-                title: 'Relatorios',
-                icon: Icons.storage,
-              ),
-              IDrawerItem(
-                selected: widget.controller.selectedIndex == 3,
-                onTap: () {
-                  if (ScreenHelper.isMobile(context)) {
-                    context.pop();
-                  }
-                  widget.controller.setSelectedIndex(3);
-                },
-                title: 'Tipos',
-                icon: Icons.type_specimen,
-              ),
-              IDrawerItem(
-                selected: widget.controller.selectedIndex == 4,
-                onTap: () {
-                  if (ScreenHelper.isMobile(context)) {
-                    context.pop();
-                  }
-                  widget.controller.setSelectedIndex(4);
-                },
-                title: 'Fornecedores',
-                icon: Icons.supervised_user_circle_rounded,
-              ),
-              IDrawerItem(
-                selected: widget.controller.selectedIndex == 5,
-                onTap: () {
-                  if (ScreenHelper.isMobile(context)) {
-                    context.pop();
-                  }
-                  widget.controller.setSelectedIndex(5);
-                },
-                title: 'Localidades',
-                icon: Icons.location_on,
-              ),
+              // Cada item só aparece para quem tem a permissão de leitura da tela
+              // (mesma matriz da API). Os índices seguem as páginas do PageView.
+              for (final item in _items)
+                if (widget.controller.can(item.permission))
+                  IDrawerItem(
+                    selected: widget.controller.selectedIndex == item.index,
+                    onTap: () {
+                      if (ScreenHelper.isMobile(context)) {
+                        context.pop();
+                      }
+                      widget.controller.setSelectedIndex(item.index);
+                    },
+                    title: item.title,
+                    icon: item.icon,
+                  ),
               Spacer(),
               IDrawerItem(
                 selected: widget.controller.selectedIndex == 20,

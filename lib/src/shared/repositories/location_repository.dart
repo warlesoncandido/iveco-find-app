@@ -5,6 +5,7 @@ import 'package:iveco_find/src/shared/models/location_model.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
 import 'package:iveco_find/src/shared/params/location_params.dart';
 import 'package:iveco_find/src/shared/utils/failure.dart';
+import 'package:iveco_find/src/shared/utils/helpers/session_helper.dart';
 
 class LocationRepository {
   final ClientDio dio;
@@ -15,7 +16,7 @@ class LocationRepository {
   }) async {
     try {
       final result = await dio.get(
-        '/api/v1/localidades?pagina=$page&tamanhoPagina=25&ordem=asc&q=&incluirInativos=true',
+        '/api/v1/localidades?pagina=$page&tamanhoPagina=25&ordem=asc&q=${await SessionHelper.includeInactiveQuery()}',
         isAuth: true,
       );
       return Right(

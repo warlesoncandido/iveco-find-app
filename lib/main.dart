@@ -8,6 +8,7 @@ import 'package:iveco_find/src/modules/home/pages/actives/actives_module.dart';
 import 'package:iveco_find/src/modules/home/pages/location/location_module.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/supplier_module.dart';
 import 'package:iveco_find/src/modules/home/pages/types/type_module.dart';
+import 'package:iveco_find/src/modules/home/pages/user/user_module.dart';
 
 void main() {
   // DEPENDENCIES INJECTION
@@ -44,10 +45,12 @@ class MyApp extends StatelessWidget {
 final _router = GoRouter(
   routes: [
     authModule,
+    changePasswordModule,
     homeModule,
     activiesModule,
     typeModule,
     supplierModule,
     locationModule,
+    userModule,
   ],
 );

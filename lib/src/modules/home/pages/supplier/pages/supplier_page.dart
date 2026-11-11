@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/shared/enums/permission.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/components/supplier_card_component.dart';
@@ -18,6 +20,10 @@ class SupplierPage extends StatefulWidget {
 class _SupplierPageState extends State<SupplierPage> {
   final controller = GetIt.instance.get<SupplierController>();
 
+  /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
+  bool get _canManage =>
+      GetIt.instance.get<HomeController>().can(Permission.cadastrosGerir);
+
   @override
   void initState() {
     controller.loadSuppliers();
@@ -32,15 +38,19 @@ class _SupplierPageState extends State<SupplierPage> {
         return IView(
           behaviourPage: controller.behaviourpage,
           onRetry: () => controller.loadSuppliers(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final result = await context.pushNamed('add-or-edit-supplier');
-              if (result == true) {
-                controller.loadSuppliers();
-              }
-            },
-            child: Icon(Icons.add),
-          ),
+          floatingActionButton: !_canManage
+              ? SizedBox.shrink()
+              : FloatingActionButton(
+                  onPressed: () async {
+                    final result = await context.pushNamed(
+                      'add-or-edit-supplier',
+                    );
+                    if (result == true) {
+                      controller.loadSuppliers();
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
           bottom: controller.pagination != null
               ? IPagination(
                   currentPage: controller.currentPage,
@@ -62,15 +72,17 @@ class _SupplierPageState extends State<SupplierPage> {
                       final item = controller.suppliers[index];
                       return SupplierCardComponent(
                         item: item,
-                        onTap: () async {
-                          final result = await context.pushNamed(
-                            'add-or-edit-supplier',
-                            extra: item,
-                          );
-                          if (result == true) {
-                            controller.loadSuppliers();
-                          }
-                        },
+                        onTap: !_canManage
+                            ? null
+                            : () async {
+                                final result = await context.pushNamed(
+                                  'add-or-edit-supplier',
+                                  extra: item,
+                                );
+                                if (result == true) {
+                                  controller.loadSuppliers();
+                                }
+                              },
                       );
                     },
                   ),

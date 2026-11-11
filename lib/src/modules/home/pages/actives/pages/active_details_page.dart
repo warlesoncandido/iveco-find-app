@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_history_item.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/components/active_qr_card_component.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_status_tag.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
@@ -75,6 +76,12 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
           _buildHeader(active),
           SizedBox(height: md),
           _buildInfo(active),
+          SizedBox(height: md),
+          ActiveQrCardComponent(
+            id: active.id,
+            codigoInterno: active.codigoInterno,
+            nome: active.nome,
+          ),
           SizedBox(height: md),
           Text('Histórico', style: ITheme.styles.subTitleBold()),
           SizedBox(height: sm),

@@ -26,7 +26,9 @@ class _AuthPageState extends State<AuthPage> {
     final isLogged = await controller.isAuthenticated();
 
     if (isLogged) {
-      context.pushNamed('/home');
+      final mustChange = await controller.mustChangePassword();
+      if (!mounted) return;
+      context.pushNamed(mustChange ? 'change-password' : '/home');
     }
   }
 
@@ -46,7 +48,9 @@ class _AuthPageState extends State<AuthPage> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
+                    color: ITheme.colors.background,
+
                     image: DecorationImage(
                       image: AssetImage(IvecoImages.login),
                       fit: BoxFit.cover,
@@ -127,7 +131,11 @@ class _AuthPageState extends State<AuthPage> {
                                       message: 'Falha ao realizar o login',
                                     );
                                   },
-                                  onSuccess: () {
+                                  onSuccess: (mustChangePassword) {
+                                    if (mustChangePassword) {
+                                      context.pushNamed('change-password');
+                                      return;
+                                    }
                                     context.pushNamed('/home');
                                     SnackbarUtil.showSuccess(
                                       context,
