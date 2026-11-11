@@ -67,7 +67,11 @@ class PublicActiveController extends ChangeNotifier {
 }
 
 class PublicActivePage extends StatefulWidget {
-  const PublicActivePage({super.key, required this.id, required this.repository});
+  const PublicActivePage({
+    super.key,
+    required this.id,
+    required this.repository,
+  });
 
   final String? id;
   final PublicActiveRepository repository;
@@ -97,7 +101,7 @@ class _PublicActivePageState extends State<PublicActivePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Iveco Find')),
+      appBar: AppBar(title: const Text('Iveco Academy - Ativo')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -120,16 +124,15 @@ class _PublicActivePageState extends State<PublicActivePage> {
       case PublicActiveState.loading:
         return const Center(child: CircularProgressIndicator());
       case PublicActiveState.notFound:
-        return _Message(
-          icon: Icons.search_off,
-          text: 'Ativo não encontrado',
-        );
+        return _Message(icon: Icons.search_off, text: 'Ativo não encontrado');
       case PublicActiveState.error:
         return _Message(
           icon: Icons.cloud_off,
           text: controller.errorMessage ?? 'Não foi possível carregar o ativo.',
           action: FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: ITheme.colors.primary),
+            style: FilledButton.styleFrom(
+              backgroundColor: ITheme.colors.primary,
+            ),
             onPressed: controller.load,
             child: const Text('Tentar novamente'),
           ),
@@ -158,13 +161,23 @@ class _ActiveCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(active.nome, style: ITheme.styles.headerBold(color: ITheme.colors.textColor)),
+          Text(
+            active.nome,
+            style: ITheme.styles.headerBold(color: ITheme.colors.textColor),
+          ),
           const SizedBox(height: 8),
           _StatusTag(status: active.status),
           const SizedBox(height: 16),
           _Field(label: 'Código interno', value: active.codigoInterno),
           const SizedBox(height: 12),
           _Field(label: 'Localidade', value: active.localidade),
+          const SizedBox(height: 12),
+          _Field(label: 'Setor', value: active.setor),
+          const SizedBox(height: 12),
+          _Field(
+            label: 'Responsável',
+            value: active.responsavel ?? 'Não informado',
+          ),
         ],
       ),
     );
@@ -180,7 +193,10 @@ class _StatusTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final known = ActiveStatus.values.where((e) => e.value == status);
     if (known.isNotEmpty) return ActiveStatusTag(status: known.first);
-    return Text(status, style: ITheme.styles.bodyTinyBold(color: ITheme.colors.cinza90));
+    return Text(
+      status,
+      style: ITheme.styles.bodyTinyBold(color: ITheme.colors.cinza90),
+    );
   }
 }
 
@@ -195,9 +211,15 @@ class _Field extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: ITheme.styles.bodyTinyRegular(color: ITheme.colors.cinza110)),
+        Text(
+          label,
+          style: ITheme.styles.bodyTinyRegular(color: ITheme.colors.cinza110),
+        ),
         const SizedBox(height: 2),
-        Text(value, style: ITheme.styles.bodyRegular(color: ITheme.colors.textColor)),
+        Text(
+          value,
+          style: ITheme.styles.bodyRegular(color: ITheme.colors.textColor),
+        ),
       ],
     );
   }
