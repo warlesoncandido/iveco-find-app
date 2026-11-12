@@ -4,6 +4,7 @@ import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
 import 'package:iveco_find/src/modules/auth/controllers/change_password_controller.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/dashboard/controllers/dashboard_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/actives_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/add_or_edit_active_controller.dart';
@@ -22,6 +23,7 @@ import 'package:iveco_find/src/modules/home/pages/user/controllers/user_controll
 import 'package:iveco_find/src/shared/repositories/active_repository.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
 import 'package:iveco_find/src/shared/repositories/category_repository.dart';
+import 'package:iveco_find/src/shared/repositories/dashboard_repository.dart';
 import 'package:iveco_find/src/shared/repositories/location_repository.dart';
 import 'package:iveco_find/src/shared/repositories/section_repository.dart';
 import 'package:iveco_find/src/shared/repositories/supplier_repository.dart';
@@ -64,6 +66,9 @@ class Injections {
     GetIt.instance.registerSingleton<UserRepository>(
       UserRepository(dio: GetIt.instance.get<ClientDio>()),
     );
+    GetIt.instance.registerSingleton<DashboardRepository>(
+      DashboardRepository(dio: GetIt.instance.get<ClientDio>()),
+    );
 
     //CONTROLLER
     GetIt.instance.registerSingleton<AuthController>(
@@ -84,6 +89,12 @@ class Injections {
       HomeController(
         authRepository: GetIt.instance.get<AuthRepository>(),
         storage: GetIt.instance.get<LocalStorage>(),
+      ),
+    );
+
+    GetIt.instance.registerSingleton<DashboardController>(
+      DashboardController(
+        repository: GetIt.instance.get<DashboardRepository>(),
       ),
     );
 
