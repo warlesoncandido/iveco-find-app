@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
 import 'package:iveco_find/src/shared/models/supplier_model.dart';
@@ -29,7 +30,7 @@ class SupplierRepository {
         ),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar tipos.'));
+      return Left(Failure(message: L10n.current.suppliersFetchError));
     }
   }
 
@@ -43,7 +44,7 @@ class SupplierRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao criar fornecedor.';
+          error.response?.data['detail'] ?? L10n.current.supplierCreateError;
       return Left(Failure(message: message));
     }
   }
@@ -61,7 +62,7 @@ class SupplierRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao atualizar fornecedor.';
+          error.response?.data['detail'] ?? L10n.current.supplierUpdateError;
       return Left(Failure(message: message));
     }
   }
@@ -79,7 +80,7 @@ class SupplierRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar fornecedores.'));
+      return Left(Failure(message: L10n.current.suppliersFetchError));
     }
   }
 }

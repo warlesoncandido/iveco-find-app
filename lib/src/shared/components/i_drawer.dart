@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/shared/enums/permission.dart';
@@ -8,41 +9,51 @@ import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
 const _items = [
   (
     index: 0,
-    title: 'Dashboard',
+    title: _drawerDashboard,
     icon: Icons.dashboard,
     permission: Permission.ativosLer,
   ),
   (
     index: 1,
-    title: 'Ativos',
+    title: _drawerActives,
     icon: Icons.inventory,
     permission: Permission.ativosLer,
   ),
   (
     index: 3,
-    title: 'Tipos',
+    title: _drawerTypes,
     icon: Icons.type_specimen,
     permission: Permission.cadastrosLer,
   ),
   (
     index: 4,
-    title: 'Fornecedores',
+    title: _drawerSuppliers,
     icon: Icons.supervised_user_circle_rounded,
     permission: Permission.cadastrosLer,
   ),
   (
     index: 5,
-    title: 'Localidades',
+    title: _drawerLocations,
     icon: Icons.location_on,
     permission: Permission.cadastrosLer,
   ),
   (
     index: 6,
-    title: 'Usuários',
+    title: _drawerUsers,
     icon: Icons.manage_accounts,
     permission: Permission.usuariosGerir,
   ),
 ];
+
+String _drawerDashboard(AppLocalizations l) => l.drawerDashboard;
+String _drawerActives(AppLocalizations l) => l.drawerActives;
+String _drawerTypes(AppLocalizations l) => l.drawerTypes;
+String _drawerSuppliers(AppLocalizations l) => l.drawerSuppliers;
+String _drawerLocations(AppLocalizations l) => l.drawerLocations;
+String _drawerUsers(AppLocalizations l) => l.drawerUsers;
+
+/// Índice da página de Configurações no PageView da Home (sem permissão: todos veem).
+const settingsPageIndex = 7;
 
 class IDrawerComponent extends StatefulWidget {
   final HomeController controller;
@@ -58,6 +69,7 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, child) {
+        final l = AppLocalizations.of(context)!;
         return Drawer(
           backgroundColor: ITheme.colors.primary,
           child: Column(
@@ -65,10 +77,10 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
               Container(
                 height: 100,
                 color: ITheme.colors.primary,
-                child: const Center(
+                child: Center(
                   child: Text(
-                    'Gestão de ativos',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    l.appHeader,
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ),
@@ -84,10 +96,21 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
                       }
                       widget.controller.setSelectedIndex(item.index);
                     },
-                    title: item.title,
+                    title: item.title(l),
                     icon: item.icon,
                   ),
               Spacer(),
+              IDrawerItem(
+                selected: widget.controller.selectedIndex == settingsPageIndex,
+                onTap: () {
+                  if (ScreenHelper.isMobile(context)) {
+                    context.pop();
+                  }
+                  widget.controller.setSelectedIndex(settingsPageIndex);
+                },
+                title: l.drawerSettings,
+                icon: Icons.settings,
+              ),
               IDrawerItem(
                 selected: widget.controller.selectedIndex == 20,
                 onTap: () => widget.controller.logout(
@@ -95,7 +118,7 @@ class _IDrawerComponentState extends State<IDrawerComponent> {
                     context.pop();
                   },
                 ),
-                title: 'Sair',
+                title: l.commonLogout,
                 icon: Icons.exit_to_app,
               ),
             ],

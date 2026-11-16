@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
 import 'package:iveco_find/src/shared/models/section_model.dart';
@@ -29,7 +30,7 @@ class SectionRepository {
         ),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar setores.'));
+      return Left(Failure(message: L10n.current.sectionsFetchError));
     }
   }
 
@@ -46,7 +47,7 @@ class SectionRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao cadastrar setor.';
+          error.response?.data['detail'] ?? L10n.current.sectionCreateError;
       return Left(Failure(message: message));
     }
   }
@@ -65,7 +66,7 @@ class SectionRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao atualizar setor.';
+          error.response?.data['detail'] ?? L10n.current.sectionUpdateError;
       return Left(Failure(message: message));
     }
   }
@@ -85,7 +86,7 @@ class SectionRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar setores.'));
+      return Left(Failure(message: L10n.current.sectionsFetchError));
     }
   }
 }

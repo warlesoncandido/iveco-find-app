@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/shared/components/i_tag.dart';
@@ -12,7 +13,11 @@ class UserCardComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final perfil = UserProfile.fromValue(item.perfil)?.label ?? item.perfil;
+    final perfil =
+        UserProfile.fromValue(
+          item.perfil,
+        )?.label(AppLocalizations.of(context)!) ??
+        item.perfil;
     return Card(
       color: ITheme.colors.branco,
       child: InkWell(

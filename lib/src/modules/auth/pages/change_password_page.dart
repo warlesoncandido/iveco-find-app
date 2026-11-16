@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/images.dart';
@@ -25,7 +26,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     controller.changePassword(
       onSuccess: () {
         if (!mounted) return;
-        SnackbarUtil.showSuccess(context, message: 'Senha alterada com sucesso!');
+        SnackbarUtil.showSuccess(
+          context,
+          message: AppLocalizations.of(context)!.changePasswordSuccess,
+        );
         context.pushReplacementNamed('/home');
       },
       onError: (message) {
@@ -46,6 +50,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -63,53 +68,57 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       spacing: md,
                       children: [
                         Image.asset(IvecoImages.logo, width: 200),
-                        Text('Trocar senha', style: ITheme.styles.bodyBold()),
                         Text(
-                          'Você entrou com uma senha provisória. Defina uma nova senha para continuar.',
+                          l.changePasswordTitle,
+                          style: ITheme.styles.bodyBold(),
+                        ),
+                        Text(
+                          l.changePasswordDescription,
                           textAlign: TextAlign.center,
                           style: ITheme.styles.bodyLight(
                             color: ITheme.colors.cinza145,
                           ),
                         ),
                         ITextField(
-                          label: 'Senha atual (provisória)',
+                          label: l.changePasswordCurrent,
                           controller: controller.currentPasswordController,
                           obscureText: true,
                           maxLines: 1,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Campo obrigatório';
+                              return l.commonRequiredField;
                             }
                             return null;
                           },
                         ),
                         ITextField(
-                          label: 'Nova senha',
+                          label: l.changePasswordNew,
                           controller: controller.newPasswordController,
                           obscureText: true,
                           maxLines: 1,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Campo obrigatório';
+                              return l.commonRequiredField;
                             }
                             if (value.length < 8 || value.length > 128) {
-                              return 'A senha deve ter de 8 a 128 caracteres';
+                              return l.changePasswordLength;
                             }
                             if (value ==
                                 controller.currentPasswordController.text) {
-                              return 'A nova senha deve ser diferente da atual';
+                              return l.changePasswordSameAsCurrent;
                             }
                             return null;
                           },
                         ),
                         ITextField(
-                          label: 'Confirmar nova senha',
+                          label: l.changePasswordConfirm,
                           controller: controller.confirmPasswordController,
                           obscureText: true,
                           maxLines: 1,
                           validator: (value) {
-                            if (value != controller.newPasswordController.text) {
-                              return 'As senhas não conferem';
+                            if (value !=
+                                controller.newPasswordController.text) {
+                              return l.changePasswordMismatch;
                             }
                             return null;
                           },
@@ -117,12 +126,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         SizedBox(
                           width: double.infinity,
                           child: IButton.primary(
-                            text: 'Salvar nova senha',
+                            text: l.changePasswordSave,
                             isLoading: controller.isLoading,
                             onTap: _save,
                           ),
                         ),
-                        ITextButton(label: 'Sair', onPressed: _logout),
+                        ITextButton(label: l.commonLogout, onPressed: _logout),
                       ],
                     ),
                   );

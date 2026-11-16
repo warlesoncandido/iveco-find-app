@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/location_model.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
@@ -28,7 +29,7 @@ class LocationRepository {
         ),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar localidades.'));
+      return Left(Failure(message: L10n.current.locationsFetchError));
     }
   }
 
@@ -42,7 +43,7 @@ class LocationRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao cadastrar localidade.';
+          error.response?.data['detail'] ?? L10n.current.locationCreateError;
       return Left(Failure(message: message));
     }
   }
@@ -60,7 +61,7 @@ class LocationRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao atualizar localidade.';
+          error.response?.data['detail'] ?? L10n.current.locationUpdateError;
       return Left(Failure(message: message));
     }
   }
@@ -78,7 +79,7 @@ class LocationRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar localidades.'));
+      return Left(Failure(message: L10n.current.locationsFetchError));
     }
   }
 }

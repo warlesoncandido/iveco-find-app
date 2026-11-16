@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
@@ -32,6 +33,7 @@ class _AddOrEditLocationPageState extends State<AddOrEditLocationPage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -43,8 +45,8 @@ class _AddOrEditLocationPageState extends State<AddOrEditLocationPage> {
             ),
             title: Text(
               controller.location != null
-                  ? 'Editar Localidade'
-                  : 'Cadastrar Localidade',
+                  ? l.locationFormEditTitle
+                  : l.locationFormCreateTitle,
             ),
           ),
           body: Padding(
@@ -55,11 +57,11 @@ class _AddOrEditLocationPageState extends State<AddOrEditLocationPage> {
                 spacing: md,
                 children: [
                   ITextField(
-                    label: 'Nome',
+                    label: l.commonName,
                     controller: controller.nameController,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Campo obrigatorio.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
@@ -68,7 +70,7 @@ class _AddOrEditLocationPageState extends State<AddOrEditLocationPage> {
                     ISwitch(
                       value: controller.active,
                       onChanged: controller.changeActive,
-                      label: 'Ativo',
+                      label: l.commonActive,
                     ),
                 ],
               ),
@@ -78,7 +80,9 @@ class _AddOrEditLocationPageState extends State<AddOrEditLocationPage> {
             padding: EdgeInsets.all(md),
             child: IButton.primary(
               isLoading: controller.behaviour == Behaviour.loading,
-              text: controller.location != null ? 'Editar' : 'Cadastrar',
+              text: controller.location != null
+                  ? l.commonEdit
+                  : l.commonRegister,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   controller.saveLocation(
@@ -86,8 +90,8 @@ class _AddOrEditLocationPageState extends State<AddOrEditLocationPage> {
                       SnackbarUtil.showSuccess(
                         context,
                         message: controller.location != null
-                            ? 'Atualizado com sucesso!'
-                            : 'Cadastro realizado com sucesso!',
+                            ? l.commonUpdatedSuccess
+                            : l.commonCreatedSuccess,
                       );
                       controller.clearFields();
                       context.pop(true);

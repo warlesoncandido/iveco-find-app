@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/images.dart';
@@ -40,6 +41,7 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       body: Center(
         child: Row(
@@ -88,32 +90,32 @@ class _AuthPageState extends State<AuthPage> {
                         children: [
                           Image.asset(IvecoImages.logo, width: 200),
                           ITextField(
-                            label: 'Email',
+                            label: l.authEmail,
                             controller: controller.emailController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Campo obrigatório';
+                                return l.commonRequiredField;
                               }
                               if (!RegExp(
                                 r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                               ).hasMatch(value)) {
-                                return 'Email inválido';
+                                return l.authEmailInvalid;
                               }
                               return null;
                             },
                           ),
                           SizedBox(height: md),
                           ITextField(
-                            label: 'Senha',
+                            label: l.authPassword,
                             controller: controller.passwordController,
                             obscureText: true,
                             maxLines: 1,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Campo obrigatório';
+                                return l.commonRequiredField;
                               }
                               if (value.length < 6) {
-                                return 'Senha deve ter no mínimo 6 caracteres';
+                                return l.authPasswordMinLength;
                               }
                               return null;
                             },
@@ -121,14 +123,14 @@ class _AuthPageState extends State<AuthPage> {
                           SizedBox(height: md),
 
                           IButton.primary(
-                            text: 'Entrar',
+                            text: l.authSignIn,
                             onTap: () {
                               if (controller.formKey.currentState!.validate()) {
                                 controller.auth(
                                   onError: () {
                                     SnackbarUtil.showError(
                                       context,
-                                      message: 'Falha ao realizar o login',
+                                      message: l.authLoginFailed,
                                     );
                                   },
                                   onSuccess: (mustChangePassword) {
@@ -139,7 +141,7 @@ class _AuthPageState extends State<AuthPage> {
                                     context.pushNamed('/home');
                                     SnackbarUtil.showSuccess(
                                       context,
-                                      message: 'Login realizado com sucesso!',
+                                      message: l.authLoginSuccess,
                                     );
                                   },
                                 );
@@ -147,7 +149,7 @@ class _AuthPageState extends State<AuthPage> {
                             },
                           ),
                           ITextButton(
-                            label: 'Esqueci minha senha',
+                            label: l.authForgotPassword,
                             onPressed: () {},
                           ),
                         ],

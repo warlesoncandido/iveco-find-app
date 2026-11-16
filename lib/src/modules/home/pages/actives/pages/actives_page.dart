@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/shared/enums/permission.dart';
@@ -43,6 +44,7 @@ class _ActivesPageState extends State<ActivesPage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           floatingActionButton: !_canManage
               ? SizedBox.shrink()
@@ -77,7 +79,7 @@ class _ActivesPageState extends State<ActivesPage> {
                     SizedBox(
                       width: 400,
                       child: ITextField(
-                        label: 'Pesquisar ativos (nome, códigos, série...)',
+                        label: l.activesSearch,
                         suffixIcon: Icon(Icons.search),
                         onChanged: controller.search,
                       ),
@@ -85,10 +87,10 @@ class _ActivesPageState extends State<ActivesPage> {
                     SizedBox(
                       width: 220,
                       child: ISelect<ActiveStatus?>(
-                        label: 'Status',
+                        label: l.commonStatus,
                         value: controller.status,
                         items: [null, ...ActiveStatus.values],
-                        itemLabel: (item) => item?.label ?? 'Todos',
+                        itemLabel: (item) => item?.label(l) ?? l.commonAll,
                         onChanged: controller.changeStatus,
                       ),
                     ),
@@ -104,7 +106,7 @@ class _ActivesPageState extends State<ActivesPage> {
                     ),
                     Behaviour.success =>
                       controller.actives.isEmpty
-                          ? Center(child: Text('Nenhum ativo encontrado.'))
+                          ? Center(child: Text(l.activesEmpty))
                           : ListView.builder(
                               itemCount: controller.actives.length,
                               itemBuilder: (context, index) {

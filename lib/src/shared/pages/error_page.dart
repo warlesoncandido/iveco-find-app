@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/shared/components/i_button.dart';
 
 class ErrorPage extends StatelessWidget {
-  final String message;
+  /// `null` = mensagem padrão de erro de carregamento.
+  final String? message;
   final VoidCallback? onRetry;
 
-  const ErrorPage({
-    super.key,
-    this.message = 'Ocorreu um erro ao carregar as informações.',
-    this.onRetry,
-  });
+  const ErrorPage({super.key, this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: EdgeInsets.all(md),
@@ -30,13 +29,13 @@ class ErrorPage extends StatelessWidget {
               ),
               SizedBox(height: md),
               Text(
-                message,
+                message ?? l.commonLoadError,
                 textAlign: TextAlign.center,
                 style: ITheme.styles.bodyRegular(color: ITheme.colors.cinza60),
               ),
 
               SizedBox(height: md),
-              IButton.primary(text: 'Tentar novamente', onTap: onRetry),
+              IButton.primary(text: l.commonRetry, onTap: onRetry),
             ],
           ),
         ),

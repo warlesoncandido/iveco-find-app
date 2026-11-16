@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -31,7 +32,7 @@ class ActiveLabelPrinter {
     required String codigoInterno,
     required String nome,
   }) {
-    final doc = pw.Document(title: 'Etiqueta $codigoInterno');
+    final doc = pw.Document(title: L10n.current.labelPdfTitle(codigoInterno));
     doc.addPage(
       pw.Page(
         pageFormat: format,
@@ -89,7 +90,7 @@ class ActiveLabelPrinter {
     );
     return Printing.layoutPdf(
       onLayout: (_) async => bytes,
-      name: 'Etiqueta $codigoInterno',
+      name: L10n.current.labelPdfTitle(codigoInterno),
       format: format,
     );
   }

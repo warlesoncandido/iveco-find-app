@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
@@ -28,22 +29,21 @@ class _WriteOffActivePageState extends State<WriteOffActivePage> {
   }
 
   Future<void> _confirm() async {
+    final l = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirmar baixa'),
-        content: Text(
-          'A baixa é definitiva: o ativo ${widget.active.codigoInterno} não poderá mais ser movimentado nem alterado. Deseja continuar?',
-        ),
+        title: Text(l.writeOffConfirmTitle),
+        content: Text(l.writeOffConfirmMessage(widget.active.codigoInterno)),
         actions: [
           TextButton(
             onPressed: () => context.pop(false),
-            child: Text('Cancelar'),
+            child: Text(l.commonCancel),
           ),
           TextButton(
             onPressed: () => context.pop(true),
             child: Text(
-              'Baixar',
+              l.activeWriteOff,
               style: TextStyle(color: ITheme.colors.alizarin),
             ),
           ),
@@ -54,7 +54,7 @@ class _WriteOffActivePageState extends State<WriteOffActivePage> {
 
     controller.save(
       onSuccess: () {
-        SnackbarUtil.showSuccess(context, message: 'Baixa registrada!');
+        SnackbarUtil.showSuccess(context, message: l.writeOffSuccess);
         context.pop(true);
       },
       onError: (message) {
@@ -68,8 +68,9 @@ class _WriteOffActivePageState extends State<WriteOffActivePage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
-          appBar: AppBar(title: Text('Baixar Ativo')),
+          appBar: AppBar(title: Text(l.writeOffTitle)),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(md),
             child: Form(
@@ -83,18 +84,18 @@ class _WriteOffActivePageState extends State<WriteOffActivePage> {
                     style: ITheme.styles.bodyBold(),
                   ),
                   ITextField(
-                    label: 'Motivo da baixa *',
+                    label: l.writeOffReason,
                     controller: controller.observationController,
                     maxLines: 4,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Campo obrigatorio.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
                   ),
                   ITextField(
-                    label: 'Responsável',
+                    label: l.fieldResponsible,
                     controller: controller.responsibleController,
                   ),
                 ],
@@ -105,7 +106,7 @@ class _WriteOffActivePageState extends State<WriteOffActivePage> {
             padding: EdgeInsets.all(md),
             child: IButton.primary(
               isLoading: controller.behaviour == Behaviour.loading,
-              text: 'Registrar baixa',
+              text: l.writeOffSubmit,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   _confirm();

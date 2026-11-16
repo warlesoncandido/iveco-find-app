@@ -1,0 +1,316 @@
+{
+  "@@locale": "pt",
+  "appHeader": "Gestão de ativos",
+  "commonRequiredField": "Campo obrigatório.",
+  "commonSave": "Salvar",
+  "commonRegister": "Cadastrar",
+  "commonEdit": "Editar",
+  "commonCancel": "Cancelar",
+  "commonClose": "Fechar",
+  "commonActive": "Ativo",
+  "commonDisabled": "Desativado",
+  "commonName": "Nome",
+  "commonAll": "Todos",
+  "commonProfile": "Perfil",
+  "commonStatus": "Status",
+  "commonLogout": "Sair",
+  "commonUpdatedSuccess": "Atualizado com sucesso!",
+  "commonCreatedSuccess": "Cadastro realizado com sucesso!",
+  "commonRetry": "Tentar novamente",
+  "commonLoadError": "Ocorreu um erro ao carregar as informações.",
+  "commonLoadMore": "Carregar mais",
+  "commonInvalidDate": "Data inválida.",
+  "commonEmptyValue": "—",
+  "drawerDashboard": "Dashboard",
+  "drawerActives": "Ativos",
+  "drawerTypes": "Tipos",
+  "drawerSuppliers": "Fornecedores",
+  "drawerLocations": "Localidades",
+  "drawerUsers": "Usuários",
+  "drawerSettings": "Configurações",
+  "settingsTitle": "Configurações",
+  "settingsLanguageSection": "Idioma",
+  "settingsLanguageDescription": "Escolha o idioma do aplicativo.",
+  "languagePortugueseBrazil": "Português (Brasil)",
+  "languageSpanish": "Español",
+  "authEmail": "Email",
+  "authEmailInvalid": "Email inválido",
+  "authPassword": "Senha",
+  "authPasswordMinLength": "Senha deve ter no mínimo 6 caracteres",
+  "authSignIn": "Entrar",
+  "authLoginFailed": "Falha ao realizar o login",
+  "authLoginSuccess": "Login realizado com sucesso!",
+  "authForgotPassword": "Esqueci minha senha",
+  "changePasswordTitle": "Trocar senha",
+  "changePasswordDescription": "Você entrou com uma senha provisória. Defina uma nova senha para continuar.",
+  "changePasswordCurrent": "Senha atual (provisória)",
+  "changePasswordNew": "Nova senha",
+  "changePasswordLength": "A senha deve ter de 8 a 128 caracteres",
+  "changePasswordSameAsCurrent": "A nova senha deve ser diferente da atual",
+  "changePasswordConfirm": "Confirmar nova senha",
+  "changePasswordMismatch": "As senhas não conferem",
+  "changePasswordSave": "Salvar nova senha",
+  "changePasswordSuccess": "Senha alterada com sucesso!",
+  "activeStatusAvailable": "Disponível",
+  "activeStatusInUse": "Em uso",
+  "activeStatusInMaintenance": "Em manutenção",
+  "activeStatusWrittenOff": "Baixado",
+  "movementEntry": "Entrada",
+  "movementTransfer": "Transferência",
+  "movementCheckout": "Saída para uso",
+  "movementReturn": "Devolução",
+  "movementSendToMaintenance": "Envio para manutenção",
+  "movementReturnFromMaintenance": "Retorno de manutenção",
+  "movementWriteOff": "Baixa",
+  "profileAdministrator": "Administrador",
+  "profileManager": "Gestor",
+  "profileOperational": "Operacional",
+  "profileViewer": "Consulta",
+  "fieldName": "Nome",
+  "fieldInternalCode": "Código interno",
+  "fieldSapCode": "Código SAP",
+  "fieldSerialNumber": "Número de série",
+  "fieldPatrimony": "Patrimônio",
+  "fieldType": "Tipo",
+  "fieldCategory": "Categoria",
+  "fieldSubcategory": "Subcategoria",
+  "fieldBrand": "Marca",
+  "fieldModel": "Modelo",
+  "fieldSection": "Setor",
+  "fieldLocation": "Localização",
+  "fieldResponsible": "Responsável",
+  "fieldStatus": "Status",
+  "fieldEntryDate": "Data de entrada",
+  "fieldAcquisitionDate": "Data de aquisição",
+  "fieldValue": "Valor",
+  "fieldSupplier": "Fornecedor",
+  "fieldUsefulLife": "Vida útil",
+  "fieldUsefulLifeMonths": "Vida útil (meses)",
+  "fieldLastMovement": "Última movimentação",
+  "historyChange": "Alteração",
+  "historyDeletion": "Exclusão",
+  "historyRestore": "Restauração",
+  "historyMovement": "Movimentação",
+  "historyNote": "Obs.: {note}",
+  "@historyNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "activeDetailsTitle": "Detalhes do Ativo",
+  "activeHistory": "Histórico",
+  "activeHistoryEmpty": "Nenhum evento registrado.",
+  "activeMove": "Movimentar",
+  "activeWriteOff": "Baixar",
+  "activeUsefulLifeValue": "{months, plural, =1{1 mês} other{{months} meses}}",
+  "@activeUsefulLifeValue": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "activeLastMovementValue": "{date} por {author}",
+  "@activeLastMovementValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeTitle": "QR Code",
+  "qrCodeSemantics": "QR Code do Ativo {code}",
+  "@qrCodeSemantics": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "qrPrintLabel": "Imprimir etiqueta",
+  "qrPrintError": "Não foi possível imprimir a etiqueta.",
+  "labelPdfTitle": "Etiqueta {code}",
+  "@labelPdfTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "activesSearch": "Pesquisar ativos (nome, códigos, série...)",
+  "activesEmpty": "Nenhum ativo encontrado.",
+  "activeFormEditTitle": "Editar Ativo",
+  "activeFormCreateTitle": "Cadastrar Ativo",
+  "activeFormCreatedSuccess": "Ativo {code} cadastrado com sucesso!",
+  "@activeFormCreatedSuccess": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "activeFormName": "Nome do Ativo *",
+  "activeFormType": "Tipo do Ativo *",
+  "activeFormLocationReadOnly": "Localização (alterar por Movimentação)",
+  "activeFormLocality": "Localidade *",
+  "activeFormSection": "Setor *",
+  "activeFormEntryDate": "Data de entrada *",
+  "activeFormUsefulLifeMin": "Informe ao menos 1 mês.",
+  "moveTitle": "Movimentar Ativo",
+  "moveCurrentLocation": "Atual: {location}",
+  "@moveCurrentLocation": {
+    "placeholders": {
+      "location": {
+        "type": "String"
+      }
+    }
+  },
+  "moveMovement": "Movimentação *",
+  "moveStatusAfter": "Status após a movimentação: ",
+  "moveDestinationLocality": "Localidade de destino",
+  "moveDestinationSectionRequired": "Setor de destino *",
+  "moveDestinationSectionOptional": "Setor de destino (opcional)",
+  "moveObservation": "Observação",
+  "moveObservationRequired": "Observação *",
+  "moveSubmit": "Registrar movimentação",
+  "moveSuccess": "Movimentação registrada com sucesso!",
+  "moveSelectSection": "Selecione o setor de destino.",
+  "moveSelectDifferentSection": "Selecione um setor diferente do atual.",
+  "writeOffTitle": "Baixar Ativo",
+  "writeOffConfirmTitle": "Confirmar baixa",
+  "writeOffConfirmMessage": "A baixa é definitiva: o ativo {code} não poderá mais ser movimentado nem alterado. Deseja continuar?",
+  "@writeOffConfirmMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "writeOffSuccess": "Baixa registrada!",
+  "writeOffReason": "Motivo da baixa *",
+  "writeOffSubmit": "Registrar baixa",
+  "dashboardTitle": "Dashboard",
+  "dashboardTotal": "Total de ativos",
+  "dashboardTotalSubtitle": "Sem baixados",
+  "dashboardOfTotal": "{percent} do total",
+  "@dashboardOfTotal": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardAssetValue": "Valor patrimonial",
+  "dashboardWithoutValue": "{count, plural, =1{1 sem valor} other{{count} sem valor}}",
+  "@dashboardWithoutValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardByStatus": "Por status",
+  "dashboardByLocation": "Por localidade",
+  "dashboardTopTypes": "Top 5 por tipo",
+  "dashboardEmpty": "Nenhum ativo cadastrado",
+  "reportsTitle": "Relatórios",
+  "typePrefixValue": "Prefixo: {prefix}",
+  "@typePrefixValue": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "typePrefix": "Prefixo",
+  "typeFormEditTitle": "Editar Tipo",
+  "typeFormCreateTitle": "Cadastrar Tipo",
+  "typesSearch": "Pesquisar tipo",
+  "supplierFormEditTitle": "Editar Fornecedor",
+  "supplierFormCreateTitle": "Cadastrar Fornecedor",
+  "supplierName": "Nome do Fornecedor",
+  "supplierCnpj": "CNPJ do Fornecedor",
+  "supplierCnpjInvalid": "CNPJ inválido.",
+  "supplierPhone": "Telefone do Fornecedor",
+  "supplierPhoneInvalid": "Informe um telefone válido com DDD (10 ou 11 dígitos).",
+  "suppliersSearch": "Pesquisar Fornecedor",
+  "locationFormEditTitle": "Editar Localidade",
+  "locationFormCreateTitle": "Cadastrar Localidade",
+  "sectionFormEditTitle": "Editar Setor",
+  "sectionFormCreateTitle": "Cadastrar Setor",
+  "locationDetailsTitle": "Detalhes da Localidade",
+  "locationSections": "Setores",
+  "locationSectionsEmpty": "Nenhum setor cadastrado.",
+  "locationsSearch": "Pesquisar localidade",
+  "provisionalPasswordTitle": "Senha provisória",
+  "provisionalPasswordHint": "Anote ou copie a senha abaixo e entregue ao usuário. Ela não será exibida novamente.",
+  "provisionalPasswordCopy": "Copiar",
+  "provisionalPasswordCopied": "Senha copiada.",
+  "provisionalPasswordValidUntil": "Válida até {date}",
+  "@provisionalPasswordValidUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "userCreatedTitle": "Usuário cadastrado",
+  "userResetPassword": "Redefinir senha",
+  "userResetPasswordMessage": "Uma nova senha provisória será gerada para {name} e todas as sessões dele serão encerradas. Deseja continuar?",
+  "@userResetPasswordMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userResetPasswordFallbackName": "o usuário",
+  "userResetConfirm": "Redefinir",
+  "userPasswordResetTitle": "Senha redefinida",
+  "userFormEditTitle": "Editar Usuário",
+  "userFormCreateTitle": "Cadastrar Usuário",
+  "userEmail": "E-mail",
+  "userEmailInvalid": "E-mail inválido.",
+  "usersSearch": "Pesquisar usuário (nome ou e-mail)",
+  "usersStatusFilter": "Situação",
+  "usersActive": "Ativos",
+  "usersInactive": "Inativos",
+  "usersEmpty": "Nenhum usuário encontrado.",
+  "activesFetchError": "Falha ao buscar ativos.",
+  "activeFetchError": "Falha ao buscar ativo.",
+  "activeCreateError": "Falha ao cadastrar ativo.",
+  "activeUpdateError": "Falha ao atualizar ativo.",
+  "historyFetchError": "Falha ao buscar histórico.",
+  "movementsFetchError": "Falha ao buscar movimentações.",
+  "movementCreateError": "Falha ao registrar movimentação.",
+  "writeOffError": "Falha ao registrar baixa.",
+  "loginError": "Falha ao realizar login.",
+  "changePasswordError": "Falha ao trocar a senha.",
+  "logoutError": "Falha ao realizar o logout.",
+  "categoriesFetchError": "Falha ao buscar categorias.",
+  "subcategoriesFetchError": "Falha ao buscar subcategorias.",
+  "dashboardSummaryFetchError": "Falha ao buscar o resumo do dashboard.",
+  "dashboardByLocationFetchError": "Falha ao buscar ativos por localidade.",
+  "locationsFetchError": "Falha ao buscar localidades.",
+  "locationCreateError": "Falha ao cadastrar localidade.",
+  "locationUpdateError": "Falha ao atualizar localidade.",
+  "sectionsFetchError": "Falha ao buscar setores.",
+  "sectionCreateError": "Falha ao cadastrar setor.",
+  "sectionUpdateError": "Falha ao atualizar setor.",
+  "suppliersFetchError": "Falha ao buscar fornecedores.",
+  "supplierCreateError": "Falha ao criar fornecedor.",
+  "supplierUpdateError": "Falha ao atualizar fornecedor.",
+  "typesFetchError": "Falha ao buscar tipos.",
+  "typeCreateError": "Falha ao cadastrar tipo.",
+  "typeUpdateError": "Falha ao atualizar tipo.",
+  "usersFetchError": "Falha ao buscar usuários.",
+  "userFetchError": "Falha ao buscar usuário.",
+  "userCreateError": "Falha ao cadastrar usuário.",
+  "userUpdateError": "Falha ao atualizar usuário.",
+  "userResetPasswordError": "Falha ao redefinir senha."
+}

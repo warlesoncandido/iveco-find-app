@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/core/services/i_local_storage.dart';
 import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
@@ -34,6 +35,11 @@ class Injections {
   static void inittialized() {
     //LOCALSTORAGE
     GetIt.instance.registerSingleton<LocalStorage>(LocalStorage());
+
+    //IDIOMA
+    GetIt.instance.registerSingleton<LocaleController>(
+      LocaleController(storage: GetIt.instance.get<LocalStorage>()),
+    );
 
     //DIO
     GetIt.instance.registerSingleton<ClientDio>(

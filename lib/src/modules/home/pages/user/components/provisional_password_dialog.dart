@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
@@ -11,13 +12,15 @@ import 'package:iveco_find/src/shared/utils/helpers/date_helper.dart';
 Future<void> showProvisionalPasswordDialog(
   BuildContext context, {
   required ProvisionalPasswordModel password,
-  String title = 'Senha provisória',
+  String? title,
 }) {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
-    builder: (context) =>
-        ProvisionalPasswordDialog(password: password, title: title),
+    builder: (context) => ProvisionalPasswordDialog(
+      password: password,
+      title: title ?? AppLocalizations.of(context)!.provisionalPasswordTitle,
+    ),
   );
 }
 
@@ -32,6 +35,7 @@ class ProvisionalPasswordDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return AlertDialog(
       title: Text(title),
       content: Column(
@@ -39,9 +43,7 @@ class ProvisionalPasswordDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: md,
         children: [
-          Text(
-            'Anote ou copie a senha abaixo e entregue ao usuário. Ela não será exibida novamente.',
-          ),
+          Text(l.provisionalPasswordHint),
           Row(
             children: [
               Expanded(
@@ -51,29 +53,31 @@ class ProvisionalPasswordDialog extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: 'Copiar',
+                tooltip: l.provisionalPasswordCopy,
                 icon: Icon(Icons.copy),
                 onPressed: () async {
                   await Clipboard.setData(
                     ClipboardData(text: password.senhaProvisoria),
                   );
                   if (context.mounted) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text('Senha copiada.')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l.provisionalPasswordCopied)),
+                    );
                   }
                 },
               ),
             ],
           ),
           Text(
-            'Válida até ${DateHelper.formatDateTime(password.senhaProvisoriaExpiraEm)}',
+            l.provisionalPasswordValidUntil(
+              DateHelper.formatDateTime(password.senhaProvisoriaExpiraEm),
+            ),
             style: ITheme.styles.bodyLight(color: ITheme.colors.cinza145),
           ),
         ],
       ),
       actions: [
-        TextButton(onPressed: () => context.pop(), child: Text('Fechar')),
+        TextButton(onPressed: () => context.pop(), child: Text(l.commonClose)),
       ],
     );
   }

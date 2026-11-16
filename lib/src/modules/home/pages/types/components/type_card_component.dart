@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/shared/components/i_tag.dart';
@@ -32,7 +33,9 @@ class TypeCardComponent extends StatelessWidget {
                   children: [
                     Text(item.nome, style: ITheme.styles.bodyBold()),
                     Text(
-                      'Prefixo: ${item.prefixo}',
+                      AppLocalizations.of(
+                        context,
+                      )!.typePrefixValue(item.prefixo),
                       style: ITheme.styles.bodyLight(
                         color: ITheme.colors.cinza145,
                       ),

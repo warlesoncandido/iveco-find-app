@@ -4,6 +4,8 @@ import 'package:iveco_find/src/modules/home/pages/actives/components/active_qr_c
 import 'package:iveco_find/src/modules/home/pages/actives/services/active_label_printer.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../helpers/localized_app.dart';
+
 class FakeLabelPrinter extends ActiveLabelPrinter {
   FakeLabelPrinter({this.fail = false});
 
@@ -27,7 +29,7 @@ void main() {
 
   Future<void> pumpCard(WidgetTester tester, FakeLabelPrinter printer) {
     return tester.pumpWidget(
-      MaterialApp(
+      localizedApp(
         home: Scaffold(
           body: SingleChildScrollView(
             child: ActiveQrCardComponent(
@@ -43,14 +45,18 @@ void main() {
     );
   }
 
-  testWidgets('mostra o QR, o código interno e o botão de impressão', (tester) async {
+  testWidgets('mostra o QR, o código interno e o botão de impressão', (
+    tester,
+  ) async {
     await pumpCard(tester, FakeLabelPrinter());
     expect(find.byType(QrImageView), findsOneWidget);
     expect(find.text('FER-000123'), findsOneWidget);
     expect(find.text('Imprimir etiqueta'), findsOneWidget);
   });
 
-  testWidgets('Imprimir etiqueta chama a impressora com a URL do QR', (tester) async {
+  testWidgets('Imprimir etiqueta chama a impressora com a URL do QR', (
+    tester,
+  ) async {
     final printer = FakeLabelPrinter();
     await pumpCard(tester, printer);
     await tester.tap(find.text('Imprimir etiqueta'));
@@ -70,7 +76,7 @@ void main() {
   testWidgets('sem url injetada usa PublicUrl.ativo(id)', (tester) async {
     final printer = FakeLabelPrinter();
     await tester.pumpWidget(
-      MaterialApp(
+      localizedApp(
         home: Scaffold(
           body: SingleChildScrollView(
             child: ActiveQrCardComponent(

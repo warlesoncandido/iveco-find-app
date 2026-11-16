@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/dashboard_summary_model.dart';
 import 'package:iveco_find/src/shared/models/location_count_model.dart';
@@ -14,7 +15,7 @@ class DashboardRepository {
       final result = await dio.get('/api/v1/dashboard/resumo', isAuth: true);
       return Right(DashboardSummaryModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar o resumo do dashboard.'));
+      return Left(_failure(e, L10n.current.dashboardSummaryFetchError));
     }
   }
 
@@ -30,7 +31,7 @@ class DashboardRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar ativos por localidade.'));
+      return Left(_failure(e, L10n.current.dashboardByLocationFetchError));
     }
   }
 

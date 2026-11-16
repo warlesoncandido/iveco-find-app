@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
 import 'package:iveco_find/src/shared/models/type_model.dart';
@@ -26,7 +27,7 @@ class TypesRepository {
         ),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar tipos.'));
+      return Left(Failure(message: L10n.current.typesFetchError));
     }
   }
 
@@ -40,7 +41,7 @@ class TypesRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao cadastrar tipo.';
+          error.response?.data['detail'] ?? L10n.current.typeCreateError;
       return Left(Failure(message: message));
     }
   }
@@ -55,7 +56,7 @@ class TypesRepository {
       return Right(true);
     } on DioException catch (error) {
       String message =
-          error.response?.data['detail'] ?? 'Falha ao cadastrar tipo.';
+          error.response?.data['detail'] ?? L10n.current.typeUpdateError;
       return Left(Failure(message: message));
     }
   }
@@ -73,7 +74,7 @@ class TypesRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar tipos.'));
+      return Left(Failure(message: L10n.current.typesFetchError));
     }
   }
 }

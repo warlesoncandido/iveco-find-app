@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/active_history_model.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
@@ -42,7 +43,7 @@ class ActiveRepository {
         ),
       );
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar ativos.'));
+      return Left(_failure(e, L10n.current.activesFetchError));
     }
   }
 
@@ -51,7 +52,7 @@ class ActiveRepository {
       final result = await dio.get('/api/v1/ativos/$id', isAuth: true);
       return Right(ActiveModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar ativo.'));
+      return Left(_failure(e, L10n.current.activeFetchError));
     }
   }
 
@@ -64,7 +65,7 @@ class ActiveRepository {
       );
       return Right(ActiveModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao cadastrar ativo.'));
+      return Left(_failure(e, L10n.current.activeCreateError));
     }
   }
 
@@ -80,7 +81,7 @@ class ActiveRepository {
       );
       return Right(ActiveModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao atualizar ativo.'));
+      return Left(_failure(e, L10n.current.activeUpdateError));
     }
   }
 
@@ -102,7 +103,7 @@ class ActiveRepository {
         ),
       );
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar histórico.'));
+      return Left(_failure(e, L10n.current.historyFetchError));
     }
   }
 
@@ -120,7 +121,7 @@ class ActiveRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar movimentações.'));
+      return Left(_failure(e, L10n.current.movementsFetchError));
     }
   }
 
@@ -136,7 +137,7 @@ class ActiveRepository {
       );
       return Right(ActiveModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao registrar movimentação.'));
+      return Left(_failure(e, L10n.current.movementCreateError));
     }
   }
 
@@ -152,7 +153,7 @@ class ActiveRepository {
       );
       return Right(ActiveModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao registrar baixa.'));
+      return Left(_failure(e, L10n.current.writeOffError));
     }
   }
 

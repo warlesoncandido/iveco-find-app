@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 
@@ -13,8 +14,6 @@ class BarItem {
 /// Bloco com título e barras horizontais (proporcionais ao maior valor), feitas só com widgets.
 /// Sem itens, ou com todos em 0, mostra "Nenhum ativo cadastrado".
 class BarListComponent extends StatelessWidget {
-  static const emptyText = 'Nenhum ativo cadastrado';
-
   final String title;
   final List<BarItem> items;
 
@@ -35,7 +34,7 @@ class BarListComponent extends StatelessWidget {
             SizedBox(height: md),
             if (max == 0)
               Text(
-                emptyText,
+                AppLocalizations.of(context)!.dashboardEmpty,
                 style: ITheme.styles.bodySmallRegular(
                   color: ITheme.colors.cinza110,
                 ),

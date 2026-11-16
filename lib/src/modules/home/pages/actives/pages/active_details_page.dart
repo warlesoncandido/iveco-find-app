@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
@@ -43,14 +44,15 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
       listenable: controller,
       builder: (context, value) {
         final active = controller.active;
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
-            title: Text('Detalhes do Ativo'),
+            title: Text(l.activeDetailsTitle),
             actions: [
               if (controller.behaviourPage == Behaviour.success &&
                   controller.canEdit)
                 IconButton(
-                  tooltip: 'Editar',
+                  tooltip: l.commonEdit,
                   icon: Icon(Icons.edit),
                   onPressed: () =>
                       _openAndReload('add-or-edit-active', active!),
@@ -68,6 +70,7 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
   }
 
   Widget _buildBody(ActiveModel active) {
+    final l = AppLocalizations.of(context)!;
     return RefreshIndicator(
       onRefresh: controller.load,
       child: ListView(
@@ -83,10 +86,10 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
             nome: active.nome,
           ),
           SizedBox(height: md),
-          Text('Histórico', style: ITheme.styles.subTitleBold()),
+          Text(l.activeHistory, style: ITheme.styles.subTitleBold()),
           SizedBox(height: sm),
           if (controller.history.isEmpty)
-            Text('Nenhum evento registrado.', style: ITheme.styles.bodyLight()),
+            Text(l.activeHistoryEmpty, style: ITheme.styles.bodyLight()),
           for (final item in controller.history) ActiveHistoryItem(item: item),
           if (controller.hasMoreHistory)
             Center(
@@ -97,7 +100,7 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
                     )
                   : TextButton(
                       onPressed: controller.loadMoreHistory,
-                      child: Text('Carregar mais'),
+                      child: Text(l.commonLoadMore),
                     ),
             ),
         ],
@@ -106,6 +109,7 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
   }
 
   Widget _buildHeader(ActiveModel active) {
+    final l = AppLocalizations.of(context)!;
     return Card(
       color: ITheme.colors.branco,
       child: Padding(
@@ -160,7 +164,7 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
                       'movements': controller.commonMovements,
                     }),
                     icon: Icon(Icons.swap_horiz),
-                    label: Text('Movimentar'),
+                    label: Text(l.activeMove),
                   ),
                 if (controller.canWriteOff)
                   OutlinedButton.icon(
@@ -169,7 +173,7 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
                     ),
                     onPressed: () => _openAndReload('write-off-active', active),
                     icon: Icon(Icons.archive),
-                    label: Text('Baixar'),
+                    label: Text(l.activeWriteOff),
                   ),
               ],
             ),
@@ -180,28 +184,31 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
   }
 
   Widget _buildInfo(ActiveModel active) {
+    final l = AppLocalizations.of(context)!;
     final infos = <String, String?>{
-      'Tipo': active.tipoAtivo.nome,
-      'Localização': '${active.setor.nome} (${active.localidade.nome})',
-      'Responsável': active.responsavel,
-      'Código SAP': active.codigoSap,
-      'Número de série': active.numeroSerie,
-      'Patrimônio': active.patrimonio,
-      'Marca': active.marca,
-      'Modelo': active.modelo,
-      'Fornecedor': active.fornecedor?.nome,
-      'Valor': active.valor != null
+      l.fieldType: active.tipoAtivo.nome,
+      l.fieldLocation: '${active.setor.nome} (${active.localidade.nome})',
+      l.fieldResponsible: active.responsavel,
+      l.fieldSapCode: active.codigoSap,
+      l.fieldSerialNumber: active.numeroSerie,
+      l.fieldPatrimony: active.patrimonio,
+      l.fieldBrand: active.marca,
+      l.fieldModel: active.modelo,
+      l.fieldSupplier: active.fornecedor?.nome,
+      l.fieldValue: active.valor != null
           ? MoneyHelper.formatMoney(double.parse(active.valor!))
           : null,
-      'Data de entrada': DateHelper.toBr(active.dataEntrada),
-      'Data de aquisição': active.dataAquisicao != null
+      l.fieldEntryDate: DateHelper.toBr(active.dataEntrada),
+      l.fieldAcquisitionDate: active.dataAquisicao != null
           ? DateHelper.toBr(active.dataAquisicao!)
           : null,
-      'Vida útil': active.vidaUtilMeses != null
-          ? '${active.vidaUtilMeses} meses'
+      l.fieldUsefulLife: active.vidaUtilMeses != null
+          ? l.activeUsefulLifeValue(active.vidaUtilMeses!)
           : null,
-      'Última movimentação':
-          '${DateHelper.formatDateTime(active.ultimaMovimentacaoEm)} por ${active.ultimaMovimentacaoPor.nome}',
+      l.fieldLastMovement: l.activeLastMovementValue(
+        DateHelper.formatDateTime(active.ultimaMovimentacaoEm),
+        active.ultimaMovimentacaoPor.nome,
+      ),
     };
 
     return Card(
@@ -224,7 +231,10 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
                         color: ITheme.colors.cinza90,
                       ),
                     ),
-                    Text(info.value ?? '—', style: ITheme.styles.bodyBold()),
+                    Text(
+                      info.value ?? l.commonEmptyValue,
+                      style: ITheme.styles.bodyBold(),
+                    ),
                   ],
                 ),
               ),

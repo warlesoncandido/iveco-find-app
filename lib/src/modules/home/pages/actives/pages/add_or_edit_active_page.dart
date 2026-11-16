@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -34,26 +35,28 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
     super.initState();
   }
 
+  AppLocalizations get _l => AppLocalizations.of(context)!;
+
   String? _required(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Campo obrigatorio.';
+      return _l.commonRequiredField;
     }
     return null;
   }
 
   String? _requiredSelect(RefModel? value) {
     if (value == null) {
-      return 'Campo obrigatorio.';
+      return _l.commonRequiredField;
     }
     return null;
   }
 
   String? _date(String? value, {bool required = false}) {
     if (value == null || value.isEmpty) {
-      return required ? 'Campo obrigatorio.' : null;
+      return required ? _l.commonRequiredField : null;
     }
     if (!DateHelper.isValidBr(value)) {
-      return 'Data inválida.';
+      return _l.commonInvalidDate;
     }
     return null;
   }
@@ -65,6 +68,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -75,7 +79,9 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
               icon: Icon(Icons.arrow_back),
             ),
             title: Text(
-              controller.isEditing ? 'Editar Ativo' : 'Cadastrar Ativo',
+              controller.isEditing
+                  ? l.activeFormEditTitle
+                  : l.activeFormCreateTitle,
             ),
           ),
           body: switch (controller.behaviourPage) {
@@ -88,7 +94,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
             child: IButton.primary(
               isLoading: controller.behaviour == Behaviour.loading,
               isDisabled: controller.behaviourPage != Behaviour.success,
-              text: controller.isEditing ? 'Salvar' : 'Cadastrar',
+              text: controller.isEditing ? l.commonSave : l.commonRegister,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   controller.saveActive(
@@ -96,8 +102,8 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                       SnackbarUtil.showSuccess(
                         context,
                         message: controller.isEditing
-                            ? 'Atualizado com sucesso!'
-                            : 'Ativo ${active.codigoInterno} cadastrado com sucesso!',
+                            ? l.commonUpdatedSuccess
+                            : l.activeFormCreatedSuccess(active.codigoInterno),
                       );
                       controller.clearFields();
                       context.pop(active.id);
@@ -116,6 +122,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return LayoutBuilder(
       builder: (context, constraints) {
         final full = constraints.maxWidth - md * 2;
@@ -135,7 +142,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 if (controller.isEditing)
                   field(
                     ITextField(
-                      label: 'Código interno',
+                      label: l.fieldInternalCode,
                       enabled: false,
                       controller: TextEditingController(
                         text: controller.active!.codigoInterno,
@@ -145,7 +152,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                   ),
                 field(
                   ITextField(
-                    label: 'Nome do Ativo *',
+                    label: l.activeFormName,
                     controller: controller.nameController,
                     validator: _required,
                   ),
@@ -153,7 +160,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 ),
                 field(
                   ISelect<RefModel>(
-                    label: 'Tipo do Ativo *',
+                    label: l.activeFormType,
                     items: controller.types,
                     value: controller.type,
                     compare: _sameRef,
@@ -164,7 +171,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 ),
                 field(
                   ISelect<RefModel>(
-                    label: 'Fornecedor',
+                    label: l.fieldSupplier,
                     items: controller.suppliers,
                     value: controller.supplier,
                     compare: _sameRef,
@@ -175,7 +182,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 if (controller.isEditing)
                   field(
                     ITextField(
-                      label: 'Localização (alterar por Movimentação)',
+                      label: l.activeFormLocationReadOnly,
                       enabled: false,
                       controller: TextEditingController(
                         text:
@@ -187,7 +194,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 else ...[
                   field(
                     ISelect<RefModel>(
-                      label: 'Localidade *',
+                      label: l.activeFormLocality,
                       items: controller.locations,
                       value: controller.location,
                       compare: _sameRef,
@@ -198,7 +205,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                   ),
                   field(
                     ISelect<RefModel>(
-                      label: 'Setor *',
+                      label: l.activeFormSection,
                       items: controller.sections,
                       value: controller.section,
                       compare: _sameRef,
@@ -211,43 +218,43 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 ],
                 field(
                   ITextField(
-                    label: 'Código SAP',
+                    label: l.fieldSapCode,
                     controller: controller.sapCodeController,
                   ),
                 ),
                 field(
                   ITextField(
-                    label: 'Número de série',
+                    label: l.fieldSerialNumber,
                     controller: controller.serialNumberController,
                   ),
                 ),
                 field(
                   ITextField(
-                    label: 'Patrimônio',
+                    label: l.fieldPatrimony,
                     controller: controller.patrimonyController,
                   ),
                 ),
                 field(
                   ITextField(
-                    label: 'Responsável',
+                    label: l.fieldResponsible,
                     controller: controller.responsibleController,
                   ),
                 ),
                 field(
                   ITextField(
-                    label: 'Marca',
+                    label: l.fieldBrand,
                     controller: controller.brandController,
                   ),
                 ),
                 field(
                   ITextField(
-                    label: 'Modelo',
+                    label: l.fieldModel,
                     controller: controller.modelController,
                   ),
                 ),
                 field(
                   ITextField(
-                    label: 'Data de entrada *',
+                    label: l.activeFormEntryDate,
                     controller: controller.entryDateController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [DateInputFormatter()],
@@ -256,7 +263,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 ),
                 field(
                   ITextField(
-                    label: 'Data de aquisição',
+                    label: l.fieldAcquisitionDate,
                     controller: controller.acquisitionDateController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [DateInputFormatter()],
@@ -265,7 +272,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 ),
                 field(
                   ITextField(
-                    label: 'Valor',
+                    label: l.fieldValue,
                     controller: controller.valueController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [MoneyInputFormatter()],
@@ -273,7 +280,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                 ),
                 field(
                   ITextField(
-                    label: 'Vida útil (meses)',
+                    label: l.fieldUsefulLifeMonths,
                     controller: controller.usefulLifeController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -281,7 +288,7 @@ class _AddOrEditActivePageState extends State<AddOrEditActivePage> {
                       if (value != null &&
                           value.isNotEmpty &&
                           int.parse(value) < 1) {
-                        return 'Informe ao menos 1 mês.';
+                        return l.activeFormUsefulLifeMin;
                       }
                       return null;
                     },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/shared/enums/permission.dart';
@@ -50,8 +51,9 @@ class _LocationDetailsPageState extends State<LocationDetailsPage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
-          appBar: AppBar(title: Text('Detalhes da Localidade')),
+          appBar: AppBar(title: Text(l.locationDetailsTitle)),
           floatingActionButton: !_canManage
               ? SizedBox.shrink()
               : FloatingActionButton(
@@ -97,7 +99,7 @@ class _LocationDetailsPageState extends State<LocationDetailsPage> {
                     ),
                   ),
                 ),
-                Text('Setores', style: ITheme.styles.bodyBold()),
+                Text(l.locationSections, style: ITheme.styles.bodyBold()),
                 Expanded(
                   child: switch (controller.behaviourPage) {
                     Behaviour.loading => Center(
@@ -108,7 +110,7 @@ class _LocationDetailsPageState extends State<LocationDetailsPage> {
                     ),
                     Behaviour.success =>
                       controller.sections.isEmpty
-                          ? Center(child: Text('Nenhum setor cadastrado.'))
+                          ? Center(child: Text(l.locationSectionsEmpty))
                           : ListView.builder(
                               itemCount: controller.sections.length,
                               itemBuilder: (context, index) {

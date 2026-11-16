@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
@@ -47,6 +48,7 @@ class _UserPageState extends State<UserPage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         // O IView só assume a tela no erro: no loading os filtros continuam
         // montados (busca não perde texto/foco a cada recarga).
         return IView(
@@ -77,7 +79,7 @@ class _UserPageState extends State<UserPage> {
                     SizedBox(
                       width: 400,
                       child: ITextField(
-                        label: 'Pesquisar usuário (nome ou e-mail)',
+                        label: l.usersSearch,
                         controller: searchController,
                         suffixIcon: Icon(Icons.search),
                         onChanged: controller.search,
@@ -86,23 +88,23 @@ class _UserPageState extends State<UserPage> {
                     SizedBox(
                       width: 220,
                       child: ISelect<UserProfile?>(
-                        label: 'Perfil',
+                        label: l.commonProfile,
                         value: controller.perfil,
                         items: [null, ...UserProfile.values],
-                        itemLabel: (item) => item?.label ?? 'Todos',
+                        itemLabel: (item) => item?.label(l) ?? l.commonAll,
                         onChanged: controller.changePerfil,
                       ),
                     ),
                     SizedBox(
                       width: 220,
                       child: ISelect<bool?>(
-                        label: 'Situação',
+                        label: l.usersStatusFilter,
                         value: controller.ativo,
                         items: const [null, true, false],
                         itemLabel: (item) => switch (item) {
-                          null => 'Todos',
-                          true => 'Ativos',
-                          false => 'Inativos',
+                          null => l.commonAll,
+                          true => l.usersActive,
+                          false => l.usersInactive,
                         },
                         onChanged: controller.changeAtivo,
                       ),
@@ -113,7 +115,7 @@ class _UserPageState extends State<UserPage> {
                   child: controller.behaviourPage == Behaviour.loading
                       ? Center(child: CircularProgressIndicator())
                       : controller.users.isEmpty
-                      ? Center(child: Text('Nenhum usuário encontrado.'))
+                      ? Center(child: Text(l.usersEmpty))
                       : ListView.builder(
                           itemCount: controller.users.length,
                           itemBuilder: (context, index) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
@@ -36,7 +37,7 @@ class _DashboardPageState extends State<DashboardPage> {
   String _percent(int part, int total) {
     final ratio = total == 0 ? 0 : part / total;
     return NumberFormat.decimalPercentPattern(
-      locale: 'pt_BR',
+      locale: Localizations.localeOf(context).toString(),
       decimalDigits: 0,
     ).format(ratio);
   }
@@ -60,7 +61,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: md,
                   children: [
-                    Text('Dashboard', style: ITheme.styles.titleBold()),
+                    Text(
+                      AppLocalizations.of(context)!.dashboardTitle,
+                      style: ITheme.styles.titleBold(),
+                    ),
                     _responsive(wide, _cards()),
                     _responsive(wide, _bars()),
                   ],
@@ -91,24 +95,25 @@ class _DashboardPageState extends State<DashboardPage> {
 
   List<Widget> _cards() {
     final s = controller.summary!;
+    final l = AppLocalizations.of(context)!;
     return [
       StatCardComponent(
-        title: 'Total de ativos',
+        title: l.dashboardTotal,
         value: '${s.total}',
-        subtitle: 'Sem baixados',
+        subtitle: l.dashboardTotalSubtitle,
         icon: Icons.inventory_2_outlined,
       ),
       StatCardComponent(
-        title: 'Em uso',
+        title: ActiveStatus.emUso.label(l),
         value: '${s.inUse}',
-        subtitle: '${_percent(s.inUse, s.total)} do total',
+        subtitle: l.dashboardOfTotal(_percent(s.inUse, s.total)),
         icon: Icons.handyman_outlined,
         color: ActiveStatus.emUso.color,
       ),
       StatCardComponent(
-        title: 'Valor patrimonial',
+        title: l.dashboardAssetValue,
         value: MoneyHelper.formatApiMoney(s.totalValue),
-        subtitle: '${s.withoutValue} sem valor',
+        subtitle: l.dashboardWithoutValue(s.withoutValue),
         icon: Icons.attach_money,
         color: ActiveStatus.disponivel.color,
       ),
@@ -117,27 +122,28 @@ class _DashboardPageState extends State<DashboardPage> {
 
   List<Widget> _bars() {
     final s = controller.summary!;
+    final l = AppLocalizations.of(context)!;
     return [
       BarListComponent(
-        title: 'Por status',
+        title: l.dashboardByStatus,
         items: [
           for (final status in ActiveStatus.values)
             BarItem(
-              label: status.label,
+              label: status.label(l),
               value: s.byStatus[status] ?? 0,
               color: status.color,
             ),
         ],
       ),
       BarListComponent(
-        title: 'Por localidade',
+        title: l.dashboardByLocation,
         items: [
-          for (final l in controller.locations)
-            BarItem(label: l.nome, value: l.quantidade),
+          for (final loc in controller.locations)
+            BarItem(label: loc.nome, value: loc.quantidade),
         ],
       ),
       BarListComponent(
-        title: 'Top 5 por tipo',
+        title: l.dashboardTopTypes,
         items: [
           for (final t in s.byType)
             BarItem(

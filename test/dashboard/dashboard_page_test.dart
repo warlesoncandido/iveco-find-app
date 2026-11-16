@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:iveco_find/src/modules/home/pages/dashboard/components/bar_list_component.dart';
 import 'package:iveco_find/src/modules/home/pages/dashboard/controllers/dashboard_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/dashboard/pages/dashboard_page.dart';
 import 'package:iveco_find/src/shared/utils/failure.dart';
 
+import '../helpers/localized_app.dart';
 import 'fakes.dart';
 
 Future<void> _pump(
   WidgetTester tester,
   FakeDashboardRepository repo, {
   Size size = const Size(400, 900),
+  Locale locale = const Locale('pt'),
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    MaterialApp(
+    localizedApp(
+      locale: locale,
       home: DashboardPage(controller: DashboardController(repository: repo)),
     ),
   );
 }
+
+const _emptyText = 'Nenhum ativo cadastrado';
 
 /// "R$ 1.234,50" pode vir com espaço não separável.
 Finder _textMatching(String pattern) => find.byWidgetPredicate(
@@ -56,7 +60,7 @@ void main() {
       expect(find.text('Top 5 por tipo'), findsOneWidget);
       expect(find.text('Furadeira'), findsOneWidget);
       expect(find.text('Notebook'), findsOneWidget);
-      expect(find.text(BarListComponent.emptyText), findsNothing);
+      expect(find.text(_emptyText), findsNothing);
 
       // Localidades por quantidade desc: Sete Lagoas (4) antes de Betim (2).
       final sete = tester.getTopLeft(find.text('Sete Lagoas'));
@@ -78,7 +82,7 @@ void main() {
       expect(find.text('0'), findsNWidgets(2)); // Total e Em uso
       expect(find.text('0% do total'), findsOneWidget);
       expect(_textMatching(r'^R\$\s0,00$'), findsOneWidget);
-      expect(find.text(BarListComponent.emptyText), findsNWidgets(3));
+      expect(find.text(_emptyText), findsNWidgets(3));
     },
   );
 
@@ -104,4 +108,24 @@ void main() {
       expect(find.text('Total de ativos'), findsOneWidget);
     },
   );
+
+  testWidgets('em espanhol: subtítulo "del total" com o percentual em espanhol', (
+    tester,
+  ) async {
+    final repo = FakeDashboardRepository();
+    await _pump(
+      tester,
+      repo,
+      size: const Size(400, 1600),
+      locale: const Locale('es'),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Total de activos'), findsOneWidget);
+    // Formato de percentual do intl para `es`: "50 %" (com espaço não separável).
+    expect(_textMatching(r'^50\u00A0% del total$'), findsOneWidget);
+    expect(find.text('50% do total'), findsNothing);
+    expect(find.text('1 sin valor'), findsOneWidget);
+  });
 }

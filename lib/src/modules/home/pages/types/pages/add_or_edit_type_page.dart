@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,7 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -43,7 +45,9 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
               icon: Icon(Icons.arrow_back),
             ),
             title: Text(
-              controller.type != null ? 'Editar Ativo' : 'Cadastrar Ativo',
+              controller.type != null
+                  ? l.typeFormEditTitle
+                  : l.typeFormCreateTitle,
             ),
           ),
           body: Padding(
@@ -54,22 +58,22 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
                 spacing: md,
                 children: [
                   ITextField(
-                    label: 'Nome',
+                    label: l.commonName,
                     controller: controller.nameController,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Campo obrigatorio.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
                   ),
                   ITextField(
-                    label: 'Prefixo',
+                    label: l.typePrefix,
                     controller: controller.prefixController,
                     inputFormatters: [LengthLimitingTextInputFormatter(3)],
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Campo obrigatorio.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
@@ -78,7 +82,7 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
                     ISwitch(
                       value: controller.active,
                       onChanged: controller.changeActive,
-                      label: 'Ativo',
+                      label: l.commonActive,
                     ),
                 ],
               ),
@@ -88,7 +92,7 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
             padding: EdgeInsets.all(md),
             child: IButton.primary(
               isLoading: controller.behaviour == Behaviour.loading,
-              text: controller.type != null ? 'Editar' : 'Cadastrar',
+              text: controller.type != null ? l.commonEdit : l.commonRegister,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   controller.saveType(
@@ -96,8 +100,8 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
                       SnackbarUtil.showSuccess(
                         context,
                         message: controller.type != null
-                            ? 'Atualizado com sucesso!'
-                            : 'Cadastro realizado com sucesso!',
+                            ? l.commonUpdatedSuccess
+                            : l.commonCreatedSuccess,
                       );
                       controller.clearFields();
                       context.pop(true);

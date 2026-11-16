@@ -1,3 +1,4 @@
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/shared/enums/active_status.dart';
 import 'package:iveco_find/src/shared/enums/movement_type.dart';
 import 'package:iveco_find/src/shared/models/ref_model.dart';
@@ -25,15 +26,15 @@ class ActiveHistoryModel {
     required this.mudancas,
   });
 
-  String get title {
+  String title(AppLocalizations l) {
     if (tipoMovimentacao != null) {
-      return tipoMovimentacao!.label;
+      return tipoMovimentacao!.label(l);
     }
     return switch (tipo) {
-      'ALTERACAO' => 'Alteração',
-      'EXCLUSAO' => 'Exclusão',
-      'RESTAURACAO' => 'Restauração',
-      _ => 'Movimentação',
+      'ALTERACAO' => l.historyChange,
+      'EXCLUSAO' => l.historyDeletion,
+      'RESTAURACAO' => l.historyRestore,
+      _ => l.historyMovement,
     };
   }
 
@@ -66,36 +67,36 @@ class HistoryChangeModel {
     required this.depois,
   });
 
-  static const _labels = {
-    'nome': 'Nome',
-    'codigoSap': 'Código SAP',
-    'numeroSerie': 'Número de série',
-    'patrimonio': 'Patrimônio',
-    'tipoAtivoId': 'Tipo',
-    'categoriaId': 'Categoria',
-    'subcategoriaId': 'Subcategoria',
-    'marca': 'Marca',
-    'modelo': 'Modelo',
-    'setorId': 'Setor',
-    'responsavel': 'Responsável',
-    'status': 'Status',
-    'dataEntrada': 'Data de entrada',
-    'dataAquisicao': 'Data de aquisição',
-    'valor': 'Valor',
-    'fornecedorId': 'Fornecedor',
-    'vidaUtilMeses': 'Vida útil (meses)',
+  /// Rótulo do campo alterado; campo desconhecido aparece como veio da API.
+  String label(AppLocalizations l) => switch (campo) {
+    'nome' => l.fieldName,
+    'codigoSap' => l.fieldSapCode,
+    'numeroSerie' => l.fieldSerialNumber,
+    'patrimonio' => l.fieldPatrimony,
+    'tipoAtivoId' => l.fieldType,
+    'categoriaId' => l.fieldCategory,
+    'subcategoriaId' => l.fieldSubcategory,
+    'marca' => l.fieldBrand,
+    'modelo' => l.fieldModel,
+    'setorId' => l.fieldSection,
+    'responsavel' => l.fieldResponsible,
+    'status' => l.fieldStatus,
+    'dataEntrada' => l.fieldEntryDate,
+    'dataAquisicao' => l.fieldAcquisitionDate,
+    'valor' => l.fieldValue,
+    'fornecedorId' => l.fieldSupplier,
+    'vidaUtilMeses' => l.fieldUsefulLifeMonths,
+    _ => campo,
   };
 
-  String get label => _labels[campo] ?? campo;
+  String formattedBefore(AppLocalizations l) => _format(antes, l);
+  String formattedAfter(AppLocalizations l) => _format(depois, l);
 
-  String get formattedBefore => _format(antes);
-  String get formattedAfter => _format(depois);
-
-  String _format(dynamic value) {
-    if (value == null) return '—';
+  String _format(dynamic value, AppLocalizations l) {
+    if (value == null) return l.commonEmptyValue;
     if (value is Map) return value['rotulo'].toString();
     return switch (campo) {
-      'status' => ActiveStatus.fromValue(value).label,
+      'status' => ActiveStatus.fromValue(value).label(l),
       'valor' => MoneyHelper.formatMoney(double.parse(value)),
       'dataEntrada' || 'dataAquisicao' => DateHelper.toBr(value),
       _ => value.toString(),
