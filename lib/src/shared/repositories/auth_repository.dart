@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/auth_model.dart';
 import 'package:iveco_find/src/shared/utils/failure.dart';
@@ -19,11 +20,11 @@ class AuthRepository {
       );
 
       if (result.statusCode != 200) {
-        return Left(Failure(message: 'Falha ao realizar login.'));
+        return Left(Failure(message: L10n.current.loginError));
       }
       return Right(AuthModel.fromJson(result.data));
     } catch (e) {
-      return Left(Failure(message: 'Falha ao realizar login.'));
+      return Left(Failure(message: L10n.current.loginError));
     }
   }
 
@@ -47,7 +48,10 @@ class AuthRepository {
         code = e.response!.data['codigo'] as String?;
       }
       return Left(
-        Failure(message: message ?? 'Falha ao trocar a senha.', code: code),
+        Failure(
+          message: message ?? L10n.current.changePasswordError,
+          code: code,
+        ),
       );
     }
   }
@@ -57,7 +61,7 @@ class AuthRepository {
       await dio.post('/api/v1/auth/logout', isAuth: true);
       return Right(true);
     } catch (e) {
-      return Left(Failure(message: 'Falha ao realizar o logout.'));
+      return Left(Failure(message: L10n.current.logoutError));
     }
   }
 }

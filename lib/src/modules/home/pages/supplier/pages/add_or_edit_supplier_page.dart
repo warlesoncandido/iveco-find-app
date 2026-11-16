@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
@@ -34,6 +35,7 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, child) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -45,8 +47,8 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
             ),
             title: Text(
               controller.supplier != null
-                  ? 'Editar Fornecedor'
-                  : 'Cadastrar Fornecedor',
+                  ? l.supplierFormEditTitle
+                  : l.supplierFormCreateTitle,
             ),
           ),
           body: Padding(
@@ -57,32 +59,32 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
                 spacing: md,
                 children: [
                   ITextField(
-                    label: 'Nome do Fornecedor',
+                    label: l.supplierName,
                     controller: controller.nameController,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Campo obrigatório.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
                   ),
                   ITextField(
-                    label: 'CNPJ do Fornecedor',
+                    label: l.supplierCnpj,
                     controller: controller.cnpjController,
                     inputFormatters: [CnpjInputFormatter()],
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Campo obrigatório.';
+                        return l.commonRequiredField;
                       }
 
                       final cnpj = value.replaceAll(RegExp(r'\D'), '');
 
                       if (cnpj.length != 14) {
-                        return 'CNPJ inválido.';
+                        return l.supplierCnpjInvalid;
                       }
 
                       if (RegExp(r'^(\d)\1{13}$').hasMatch(cnpj)) {
-                        return 'CNPJ inválido.';
+                        return l.supplierCnpjInvalid;
                       }
 
                       List<int> multiplicadores1 = [
@@ -107,7 +109,7 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
                       int digito1 = resto < 2 ? 0 : 11 - resto;
 
                       if (int.parse(cnpj[12]) != digito1) {
-                        return 'CNPJ inválido.';
+                        return l.supplierCnpjInvalid;
                       }
 
                       List<int> multiplicadores2 = [
@@ -133,25 +135,25 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
                       int digito2 = resto < 2 ? 0 : 11 - resto;
 
                       if (int.parse(cnpj[13]) != digito2) {
-                        return 'CNPJ inválido.';
+                        return l.supplierCnpjInvalid;
                       }
 
                       return null;
                     },
                   ),
                   ITextField(
-                    label: 'Telefone do Fornecedor',
+                    label: l.supplierPhone,
                     controller: controller.phoneController,
                     inputFormatters: [PhoneInputFormatter()],
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Campo obrigatório.';
+                        return l.commonRequiredField;
                       }
 
                       final cleanPhone = value.replaceAll(RegExp(r'\D'), '');
 
                       if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-                        return 'Informe um telefone válido com DDD (10 ou 11 dígitos).';
+                        return l.supplierPhoneInvalid;
                       }
 
                       return null;
@@ -161,7 +163,7 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
                     ISwitch(
                       value: controller.active,
                       onChanged: controller.changeActive,
-                      label: 'Ativo',
+                      label: l.commonActive,
                     ),
                 ],
               ),
@@ -170,7 +172,9 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
           bottomNavigationBar: Padding(
             padding: EdgeInsets.all(md),
             child: IButton.primary(
-              text: 'Cadastrar',
+              text: controller.supplier != null
+                  ? l.commonEdit
+                  : l.commonRegister,
               isLoading: controller.behaviour == Behaviour.loading,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
@@ -179,8 +183,8 @@ class _AddOrEditSupplierPageState extends State<AddOrEditSupplierPage> {
                       SnackbarUtil.showSuccess(
                         context,
                         message: controller.supplier != null
-                            ? 'Atualizado com sucesso!'
-                            : 'Cadastro realizado com sucesso!',
+                            ? l.commonUpdatedSuccess
+                            : l.commonCreatedSuccess,
                       );
                       controller.clearFields();
                       context.pop(true);

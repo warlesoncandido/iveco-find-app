@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/shared/enums/permission.dart';
@@ -63,7 +64,9 @@ class _SupplierPageState extends State<SupplierPage> {
             child: Column(
               spacing: md,
               children: [
-                ITextField(label: 'Pesquisar Fornecedor'),
+                ITextField(
+                  label: AppLocalizations.of(context)!.suppliersSearch,
+                ),
 
                 Expanded(
                   child: ListView.builder(

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/pagination_model.dart';
 import 'package:iveco_find/src/shared/models/provisional_password_model.dart';
@@ -39,7 +40,7 @@ class UserRepository {
         ),
       );
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar usuários.'));
+      return Left(_failure(e, L10n.current.usersFetchError));
     }
   }
 
@@ -48,7 +49,7 @@ class UserRepository {
       final result = await dio.get('/api/v1/usuarios/$id', isAuth: true);
       return Right(UserModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao buscar usuário.'));
+      return Left(_failure(e, L10n.current.userFetchError));
     }
   }
 
@@ -63,7 +64,7 @@ class UserRepository {
       );
       return Right(ProvisionalPasswordModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao cadastrar usuário.'));
+      return Left(_failure(e, L10n.current.userCreateError));
     }
   }
 
@@ -79,7 +80,7 @@ class UserRepository {
       );
       return Right(UserModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao atualizar usuário.'));
+      return Left(_failure(e, L10n.current.userUpdateError));
     }
   }
 
@@ -93,7 +94,7 @@ class UserRepository {
       );
       return Right(ProvisionalPasswordModel.fromJson(result.data));
     } catch (e) {
-      return Left(_failure(e, 'Falha ao redefinir senha.'));
+      return Left(_failure(e, L10n.current.userResetPasswordError));
     }
   }
 

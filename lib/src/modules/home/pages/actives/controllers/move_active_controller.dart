@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/shared/enums/movement_type.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
 import 'package:iveco_find/src/shared/models/ref_model.dart';
@@ -87,10 +88,10 @@ class MoveActiveController extends ChangeNotifier {
 
   String? validateSection(RefModel? value) {
     if (sectionRequired && value == null) {
-      return 'Selecione o setor de destino.';
+      return L10n.current.moveSelectSection;
     }
     if (sectionRequired && value?.id == active.setor.id) {
-      return 'Selecione um setor diferente do atual.';
+      return L10n.current.moveSelectDifferentSection;
     }
     return null;
   }

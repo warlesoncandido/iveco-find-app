@@ -11,6 +11,7 @@
         "dartz",
         "dio",
         "flutter",
+        "flutter_localizations",
         "get_it",
         "go_router",
         "image",
@@ -116,7 +117,7 @@
     },
     {
       "name": "intl",
-      "version": "0.20.3",
+      "version": "0.20.2",
       "dependencies": [
         "clock",
         "meta",
@@ -158,6 +159,15 @@
         "http_parser",
         "meta",
         "mime",
+        "path"
+      ]
+    },
+    {
+      "name": "flutter_localizations",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter",
+        "intl",
         "path"
       ]
     },

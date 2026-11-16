@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/shared/models/category_model.dart';
 import 'package:iveco_find/src/shared/utils/failure.dart';
@@ -19,7 +20,7 @@ class CategoryRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar categorias.'));
+      return Left(Failure(message: L10n.current.categoriesFetchError));
     }
   }
 
@@ -37,7 +38,7 @@ class CategoryRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(Failure(message: 'Falha ao buscar subcategorias.'));
+      return Left(Failure(message: L10n.current.subcategoriesFetchError));
     }
   }
 }

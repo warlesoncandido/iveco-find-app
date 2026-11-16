@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/actives_page.dart';
 import 'package:iveco_find/src/modules/home/pages/dashboard/pages/dashboard_page.dart';
 import 'package:iveco_find/src/modules/home/pages/reports/pages/reports_page.dart';
+import 'package:iveco_find/src/modules/home/pages/settings/pages/settings_page.dart';
 import 'package:iveco_find/src/modules/home/pages/location/pages/location_page.dart';
 import 'package:iveco_find/src/modules/home/pages/supplier/pages/supplier_page.dart';
 import 'package:iveco_find/src/modules/home/pages/types/pages/types_page.dart';
@@ -14,6 +16,31 @@ import 'package:iveco_find/src/shared/utils/helpers/screen_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  /// Páginas do PageView, na ordem dos índices usados pelo drawer.
+  static List<Widget> pages(HomeController controller) {
+    final pages = <Widget>[
+      DashboardPage(),
+      ActivesPage(),
+      ReportsPage(),
+      TypesPage(),
+      SupplierPage(),
+      LocationPage(),
+      // Só alcançável pelo drawer de ADMINISTRADOR; montado sob
+      // demanda para não chamar a API com outros perfis.
+      ListenableBuilder(
+        listenable: controller,
+        builder: (context, child) =>
+            controller.isAdmin ? const UserPage() : const SizedBox.shrink(),
+      ),
+      const SettingsPage(),
+    ];
+    assert(
+      pages[settingsPageIndex] is SettingsPage,
+      'settingsPageIndex deve apontar para a SettingsPage',
+    );
+    return pages;
+  }
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -32,7 +59,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ScreenHelper.isMobile(context)
-          ? AppBar(title: Text('Gestão de ativos'))
+          ? AppBar(title: Text(AppLocalizations.of(context)!.appHeader))
           : null,
       drawer: IDrawerComponent(controller: controller),
       body: Row(
@@ -50,22 +77,7 @@ class _HomePageState extends State<HomePage> {
             child: PageView(
               controller: controller.pageController,
               physics: const NeverScrollableScrollPhysics(),
-              children: [
-                DashboardPage(),
-                ActivesPage(),
-                ReportsPage(),
-                TypesPage(),
-                SupplierPage(),
-                LocationPage(),
-                // Só alcançável pelo drawer de ADMINISTRADOR; montado sob
-                // demanda para não chamar a API com outros perfis.
-                ListenableBuilder(
-                  listenable: controller,
-                  builder: (context, child) => controller.isAdmin
-                      ? const UserPage()
-                      : const SizedBox.shrink(),
-                ),
-              ],
+              children: HomePage.pages(controller),
             ),
           ),
         ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 
+import '../helpers/localized_app.dart';
 import 'fakes.dart';
 
 void main() {
@@ -83,7 +84,7 @@ void main() {
   // setSelectedIndex anima o PageController: precisa de um PageView montado.
   testWidgets('logout volta o selectedIndex para 0 e notifica', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      localizedApp(
         home: PageView(
           controller: controller.pageController,
           children: List.generate(7, (i) => Text('page $i')),

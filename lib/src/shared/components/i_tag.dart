@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 
 class ITag extends StatelessWidget {
@@ -12,11 +13,11 @@ class ITag extends StatelessWidget {
     return Colors.red;
   }
 
-  String get message {
+  String message(AppLocalizations l) {
     if (isActive) {
-      return 'Ativo';
+      return l.commonActive;
     }
-    return 'Desativado';
+    return l.commonDisabled;
   }
 
   @override
@@ -27,7 +28,10 @@ class ITag extends StatelessWidget {
         color: color.withOpacity(0.3),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(message, style: ITheme.styles.bodyTinyRegular(color: color)),
+      child: Text(
+        message(AppLocalizations.of(context)!),
+        style: ITheme.styles.bodyTinyRegular(color: color),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/shared/enums/movement_type.dart';
@@ -24,6 +25,7 @@ class ActiveHistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Card(
       color: ITheme.colors.branco,
       child: Padding(
@@ -41,7 +43,7 @@ class ActiveHistoryItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: xs,
                 children: [
-                  Text(item.title, style: ITheme.styles.bodyBold()),
+                  Text(item.title(l), style: ITheme.styles.bodyBold()),
                   Text(
                     '${DateHelper.formatDateTime(item.ocorridoEm)} · ${item.autor.nome}',
                     style: ITheme.styles.bodySmallLight(
@@ -53,12 +55,12 @@ class ActiveHistoryItem extends StatelessWidget {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '${change.label}: ',
+                            text: '${change.label(l)}: ',
                             style: ITheme.styles.bodySmallBold(),
                           ),
                           TextSpan(
                             text:
-                                '${change.formattedBefore} → ${change.formattedAfter}',
+                                '${change.formattedBefore(l)} → ${change.formattedAfter(l)}',
                             style: ITheme.styles.bodySmallRegular(),
                           ),
                         ],
@@ -66,7 +68,7 @@ class ActiveHistoryItem extends StatelessWidget {
                     ),
                   if (item.observacao != null)
                     Text(
-                      'Obs.: ${item.observacao}',
+                      l.historyNote(item.observacao!),
                       style: ITheme.styles.bodySmallRegular(
                         color: ITheme.colors.cinza60,
                       ),

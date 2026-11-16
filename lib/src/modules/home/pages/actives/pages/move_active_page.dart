@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
@@ -44,8 +45,9 @@ class _MoveActivePageState extends State<MoveActivePage> {
       listenable: controller,
       builder: (context, value) {
         final movement = controller.movement;
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
-          appBar: AppBar(title: Text('Movimentar Ativo')),
+          appBar: AppBar(title: Text(l.moveTitle)),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(md),
             child: Form(
@@ -59,25 +61,27 @@ class _MoveActivePageState extends State<MoveActivePage> {
                     style: ITheme.styles.bodyBold(),
                   ),
                   Text(
-                    'Atual: ${widget.active.setor.nome} (${widget.active.localidade.nome})',
+                    l.moveCurrentLocation(
+                      '${widget.active.setor.nome} (${widget.active.localidade.nome})',
+                    ),
                     style: ITheme.styles.bodySmallRegular(
                       color: ITheme.colors.cinza90,
                     ),
                   ),
                   ISelect<ValidMovementModel>(
-                    label: 'Movimentação *',
+                    label: l.moveMovement,
                     items: controller.movements,
                     value: movement,
-                    itemLabel: (e) => e.tipo.label,
+                    itemLabel: (e) => e.tipo.label(l),
                     onChanged: controller.changeMovement,
                     validator: (value) =>
-                        value == null ? 'Campo obrigatorio.' : null,
+                        value == null ? l.commonRequiredField : null,
                   ),
                   if (movement != null)
                     Row(
                       children: [
                         Text(
-                          'Status após a movimentação: ',
+                          l.moveStatusAfter,
                           style: ITheme.styles.bodySmallRegular(),
                         ),
                         ActiveStatusTag(status: movement.statusDestino),
@@ -85,7 +89,7 @@ class _MoveActivePageState extends State<MoveActivePage> {
                     ),
                   if (controller.showSection) ...[
                     ISelect<RefModel>(
-                      label: 'Localidade de destino',
+                      label: l.moveDestinationLocality,
                       items: controller.locations,
                       value: controller.location,
                       compare: _sameRef,
@@ -94,8 +98,8 @@ class _MoveActivePageState extends State<MoveActivePage> {
                     ),
                     ISelect<RefModel>(
                       label: controller.sectionRequired
-                          ? 'Setor de destino *'
-                          : 'Setor de destino (opcional)',
+                          ? l.moveDestinationSectionRequired
+                          : l.moveDestinationSectionOptional,
                       items: controller.sections,
                       value: controller.section,
                       compare: _sameRef,
@@ -106,19 +110,19 @@ class _MoveActivePageState extends State<MoveActivePage> {
                     ),
                   ],
                   ITextField(
-                    label: 'Responsável',
+                    label: l.fieldResponsible,
                     controller: controller.responsibleController,
                   ),
                   ITextField(
                     label: movement?.exigeObservacao == true
-                        ? 'Observação *'
-                        : 'Observação',
+                        ? l.moveObservationRequired
+                        : l.moveObservation,
                     controller: controller.observationController,
                     maxLines: 3,
                     validator: (value) {
                       if (movement?.exigeObservacao == true &&
                           (value == null || value.trim().isEmpty)) {
-                        return 'Campo obrigatorio.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
@@ -131,15 +135,12 @@ class _MoveActivePageState extends State<MoveActivePage> {
             padding: EdgeInsets.all(md),
             child: IButton.primary(
               isLoading: controller.behaviour == Behaviour.loading,
-              text: 'Registrar movimentação',
+              text: l.moveSubmit,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   controller.save(
                     onSuccess: () {
-                      SnackbarUtil.showSuccess(
-                        context,
-                        message: 'Movimentação registrada com sucesso!',
-                      );
+                      SnackbarUtil.showSuccess(context, message: l.moveSuccess);
                       context.pop(true);
                     },
                     onError: (message) {

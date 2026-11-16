@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
@@ -37,6 +38,7 @@ class _AddOrEditSectionPageState extends State<AddOrEditSectionPage> {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -47,7 +49,9 @@ class _AddOrEditSectionPageState extends State<AddOrEditSectionPage> {
               icon: Icon(Icons.arrow_back),
             ),
             title: Text(
-              controller.section != null ? 'Editar Setor' : 'Cadastrar Setor',
+              controller.section != null
+                  ? l.sectionFormEditTitle
+                  : l.sectionFormCreateTitle,
             ),
           ),
           body: Padding(
@@ -58,11 +62,11 @@ class _AddOrEditSectionPageState extends State<AddOrEditSectionPage> {
                 spacing: md,
                 children: [
                   ITextField(
-                    label: 'Nome',
+                    label: l.commonName,
                     controller: controller.nameController,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Campo obrigatorio.';
+                        return l.commonRequiredField;
                       }
                       return null;
                     },
@@ -71,7 +75,7 @@ class _AddOrEditSectionPageState extends State<AddOrEditSectionPage> {
                     ISwitch(
                       value: controller.active,
                       onChanged: controller.changeActive,
-                      label: 'Ativo',
+                      label: l.commonActive,
                     ),
                 ],
               ),
@@ -81,7 +85,9 @@ class _AddOrEditSectionPageState extends State<AddOrEditSectionPage> {
             padding: EdgeInsets.all(md),
             child: IButton.primary(
               isLoading: controller.behaviour == Behaviour.loading,
-              text: controller.section != null ? 'Editar' : 'Cadastrar',
+              text: controller.section != null
+                  ? l.commonEdit
+                  : l.commonRegister,
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   controller.saveSection(
@@ -89,8 +95,8 @@ class _AddOrEditSectionPageState extends State<AddOrEditSectionPage> {
                       SnackbarUtil.showSuccess(
                         context,
                         message: controller.section != null
-                            ? 'Atualizado com sucesso!'
-                            : 'Cadastro realizado com sucesso!',
+                            ? l.commonUpdatedSuccess
+                            : l.commonCreatedSuccess,
                       );
                       controller.clearFields();
                       context.pop(true);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
@@ -45,14 +46,17 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
         await showProvisionalPasswordDialog(
           context,
           password: password,
-          title: 'Usuário cadastrado',
+          title: AppLocalizations.of(context)!.userCreatedTitle,
         );
         if (!mounted) return;
         _leave(true);
       },
       onUpdated: () {
         if (!mounted) return;
-        SnackbarUtil.showSuccess(context, message: 'Atualizado com sucesso!');
+        SnackbarUtil.showSuccess(
+          context,
+          message: AppLocalizations.of(context)!.commonUpdatedSuccess,
+        );
         _leave(true);
       },
       onError: (message) {
@@ -63,22 +67,25 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
   }
 
   Future<void> _resetPassword() async {
+    final l = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Redefinir senha'),
+        title: Text(l.userResetPassword),
         content: Text(
-          'Uma nova senha provisória será gerada para ${controller.user?.nome ?? 'o usuário'} e todas as sessões dele serão encerradas. Deseja continuar?',
+          l.userResetPasswordMessage(
+            controller.user?.nome ?? l.userResetPasswordFallbackName,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => context.pop(false),
-            child: Text('Cancelar'),
+            child: Text(l.commonCancel),
           ),
           TextButton(
             onPressed: () => context.pop(true),
             child: Text(
-              'Redefinir',
+              l.userResetConfirm,
               style: TextStyle(color: ITheme.colors.alizarin),
             ),
           ),
@@ -93,7 +100,7 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
         showProvisionalPasswordDialog(
           context,
           password: password,
-          title: 'Senha redefinida',
+          title: l.userPasswordResetTitle,
         );
       },
       onError: (message) {
@@ -109,6 +116,7 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
       listenable: controller,
       builder: (context, child) {
         final editing = controller.isEditing;
+        final l = AppLocalizations.of(context)!;
         final busy =
             controller.behaviour == Behaviour.loading ||
             controller.resettingPassword;
@@ -118,7 +126,7 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
               onPressed: busy ? null : () => _leave(false),
               icon: Icon(Icons.arrow_back),
             ),
-            title: Text(editing ? 'Editar Usuário' : 'Cadastrar Usuário'),
+            title: Text(editing ? l.userFormEditTitle : l.userFormCreateTitle),
           ),
           body: switch (controller.behaviourPage) {
             Behaviour.loading => Center(child: CircularProgressIndicator()),
@@ -132,51 +140,51 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ITextField(
-                      label: 'Nome',
+                      label: l.commonName,
                       controller: controller.nameController,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Campo obrigatório.';
+                          return l.commonRequiredField;
                         }
                         return null;
                       },
                     ),
                     ITextField(
-                      label: 'E-mail',
+                      label: l.userEmail,
                       controller: controller.emailController,
                       enabled: !editing,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (editing) return null;
                         final email = value?.trim() ?? '';
-                        if (email.isEmpty) return 'Campo obrigatório.';
+                        if (email.isEmpty) return l.commonRequiredField;
                         if (!RegExp(
                           r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
                         ).hasMatch(email)) {
-                          return 'E-mail inválido.';
+                          return l.userEmailInvalid;
                         }
                         return null;
                       },
                     ),
                     ISelect<UserProfile>(
-                      label: 'Perfil',
+                      label: l.commonProfile,
                       value: controller.perfil,
                       items: UserProfile.values,
-                      itemLabel: (item) => item.label,
+                      itemLabel: (item) => item.label(l),
                       onChanged: controller.changePerfil,
                       validator: (value) =>
-                          value == null ? 'Campo obrigatório.' : null,
+                          value == null ? l.commonRequiredField : null,
                     ),
                     if (editing) ...[
                       ISwitch(
                         value: controller.active,
                         onChanged: controller.changeActive,
-                        label: 'Ativo',
+                        label: l.commonActive,
                       ),
                       SizedBox(
                         width: double.infinity,
                         child: IButton.secondary(
-                          text: 'Redefinir senha',
+                          text: l.userResetPassword,
                           isLoading: controller.resettingPassword,
                           onTap: _resetPassword,
                         ),
@@ -191,7 +199,7 @@ class _AddOrEditUserPageState extends State<AddOrEditUserPage> {
               ? Padding(
                   padding: EdgeInsets.all(md),
                   child: IButton.primary(
-                    text: editing ? 'Salvar' : 'Cadastrar',
+                    text: editing ? l.commonSave : l.commonRegister,
                     isLoading: controller.behaviour == Behaviour.loading,
                     onTap: _save,
                   ),

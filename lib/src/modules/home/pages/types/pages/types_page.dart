@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/shared/enums/permission.dart';
@@ -65,7 +66,7 @@ class _TypesPageState extends State<TypesPage> {
             child: Column(
               spacing: md,
               children: [
-                ITextField(label: 'Pesquisar tipo'),
+                ITextField(label: AppLocalizations.of(context)!.typesSearch),
 
                 Expanded(
                   child: ListView.builder(

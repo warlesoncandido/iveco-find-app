@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/services/active_label_printer.dart';
@@ -45,7 +46,7 @@ class _ActiveQrCardComponentState extends State<ActiveQrCardComponent> {
       if (mounted) {
         SnackbarUtil.showError(
           context,
-          message: 'Não foi possível imprimir a etiqueta.',
+          message: AppLocalizations.of(context)!.qrPrintError,
         );
       }
     } finally {
@@ -55,6 +56,7 @@ class _ActiveQrCardComponentState extends State<ActiveQrCardComponent> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Card(
       color: ITheme.colors.branco,
       child: Padding(
@@ -62,7 +64,7 @@ class _ActiveQrCardComponentState extends State<ActiveQrCardComponent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('QR Code', style: ITheme.styles.subTitleBold()),
+            Text(l.qrCodeTitle, style: ITheme.styles.subTitleBold()),
             SizedBox(height: sm),
             Center(
               child: Column(
@@ -72,7 +74,7 @@ class _ActiveQrCardComponentState extends State<ActiveQrCardComponent> {
                     data: widget.url,
                     size: 180,
                     backgroundColor: Colors.white,
-                    semanticsLabel: 'QR Code do Ativo ${widget.codigoInterno}',
+                    semanticsLabel: l.qrCodeSemantics(widget.codigoInterno),
                   ),
                   SizedBox(height: xs),
                   Text(widget.codigoInterno, style: ITheme.styles.bodyBold()),
@@ -86,7 +88,7 @@ class _ActiveQrCardComponentState extends State<ActiveQrCardComponent> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : Icon(Icons.print),
-                    label: Text('Imprimir etiqueta'),
+                    label: Text(l.qrPrintLabel),
                   ),
                 ],
               ),
