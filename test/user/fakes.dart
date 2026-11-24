@@ -86,6 +86,27 @@ class FakeClientDio implements ClientDio {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) => _handle<T>('DELETE', path, queryParameters, data, isAuth);
+
+  @override
+  Future<Response<T>> postMultipart<T>(
+    String path, {
+    required FormData data,
+    bool isAuth = false,
+    ProgressCallback? onSendProgress,
+    Duration sendTimeout = const Duration(minutes: 5),
+  }) async {
+    final r = await _handle<T>('POST', path, null, data, isAuth);
+    onSendProgress?.call(1, 1);
+    return r;
+  }
+
+  @override
+  Future<Response<List<int>>> getBytes(
+    String path, {
+    bool isAuth = false,
+    ProgressCallback? onReceiveProgress,
+    Duration receiveTimeout = const Duration(minutes: 5),
+  }) => _handle<List<int>>('GET', path, null, null, isAuth);
 }
 
 DioException problemDetails(int status, String codigo, String detail) {

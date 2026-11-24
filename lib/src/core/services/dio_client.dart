@@ -128,6 +128,46 @@ class ClientDio {
     );
   }
 
+  /// Envio `multipart/form-data` com progresso. `sendTimeout` maior que o padrão:
+  /// um arquivo de 20 MB numa rede móvel lenta passa dos 30 s.
+  Future<Response<T>> postMultipart<T>(
+    String path, {
+    required FormData data,
+    bool isAuth = false,
+    ProgressCallback? onSendProgress,
+    Duration sendTimeout = const Duration(minutes: 5),
+  }) {
+    return _dio.post<T>(
+      path,
+      data: data,
+      onSendProgress: onSendProgress,
+      options: _withAuth(
+        Options(sendTimeout: kIsWeb ? null : sendTimeout),
+        isAuth,
+      ),
+    );
+  }
+
+  /// Download do corpo como bytes (arquivos binários, ex.: conteúdo de Anexo).
+  Future<Response<List<int>>> getBytes(
+    String path, {
+    bool isAuth = false,
+    ProgressCallback? onReceiveProgress,
+    Duration receiveTimeout = const Duration(minutes: 5),
+  }) {
+    return _dio.get<List<int>>(
+      path,
+      onReceiveProgress: onReceiveProgress,
+      options: _withAuth(
+        Options(
+          responseType: ResponseType.bytes,
+          receiveTimeout: receiveTimeout,
+        ),
+        isAuth,
+      ),
+    );
+  }
+
   Options _withAuth(Options? options, bool isAuth) {
     final opts = options ?? Options();
     return opts.copyWith(
@@ -225,6 +265,9 @@ class _AuthInterceptor extends Interceptor {
         ..[_retriedKey] = true;
       // O onRequest põe o token atual; sem auth salvo, não reenvia o antigo.
       options.headers.remove('Authorization');
+      // FormData já enviado não pode ser reenviado: refaz com uma cópia.
+      final data = options.data;
+      if (data is FormData) options.data = data.clone();
       handler.resolve(await _dio.fetch<dynamic>(options));
     } on DioException catch (e) {
       handler.next(e);

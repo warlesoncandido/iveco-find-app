@@ -38,7 +38,12 @@ class _FakeAdapter implements HttpClientAdapter {
         [],
         (acc, chunk) => acc..addAll(chunk),
       );
-      body = json.decode(utf8.decode(bytes));
+      final text = utf8.decode(bytes, allowMalformed: true);
+      try {
+        body = json.decode(text);
+      } on FormatException {
+        body = text; // multipart e outros corpos não JSON
+      }
     }
     calls.add(
       _Call(
@@ -414,5 +419,49 @@ void main() {
       ),
     );
     expect(refreshCount(), 0);
+  });
+
+  test(
+    '401 no envio multipart: renova e refaz com uma cópia do FormData',
+    () async {
+      final r = await client.postMultipart<Map<String, dynamic>>(
+        '/api/v1/ativos/x1/anexos',
+        isAuth: true,
+        data: FormData.fromMap({
+          'categoria': 'NF',
+          'arquivo': MultipartFile.fromBytes(
+            utf8.encode('%PDF-1'),
+            filename: 'nf.pdf',
+          ),
+        }),
+      );
+
+      expect(r.statusCode, 200);
+      expect(
+        adapter.calls.map((c) => '${c.method} ${c.path} ${c.authorization}'),
+        [
+          'POST /api/v1/ativos/x1/anexos Bearer old',
+          'POST $_refreshPath null',
+          'POST /api/v1/ativos/x1/anexos Bearer new',
+        ],
+      );
+      expect(adapter.calls.last.body, contains('filename="nf.pdf"'));
+      expect(adapter.calls.last.body, contains('%PDF-1'));
+    },
+  );
+
+  test('getBytes devolve o corpo binário', () async {
+    adapter.handler = (o) async => ResponseBody.fromBytes(
+      [0x25, 0x50, 0x44, 0x46],
+      200,
+      headers: {
+        Headers.contentTypeHeader: ['application/pdf'],
+      },
+    );
+    final r = await client.getBytes(
+      '/api/v1/ativos/x1/anexos/a1/conteudo',
+      isAuth: true,
+    );
+    expect(r.data, [0x25, 0x50, 0x44, 0x46]);
   });
 }
