@@ -1,0 +1,1 @@
+ C:\\Users\\warlesonsilva\\Documents\\projects\\others\\iveco-find-app\\.dart_tool\\flutter_build\\4b96bab115372036ca0c4d5f225a4ab8\\native_assets.json: 
