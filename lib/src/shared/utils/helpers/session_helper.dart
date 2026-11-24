@@ -23,4 +23,18 @@ class SessionHelper {
   /// `cadastros:gerir`; sem ela, a API responde 403 SEM_PERMISSAO.
   static Future<String> includeInactiveQuery() async =>
       await can(Permission.cadastrosGerir) ? '&incluirInativos=true' : '';
+
+  /// `queryParameters` das listas de cadastros: paginação, `q` (só quando
+  /// preenchido, sem espaços nas pontas) e `incluirInativos` pela mesma regra
+  /// de [includeInactiveQuery].
+  static Future<Map<String, dynamic>> listQuery({
+    required int page,
+    String query = '',
+  }) async => {
+    'pagina': page,
+    'tamanhoPagina': 25,
+    'ordem': 'asc',
+    if (query.trim().isNotEmpty) 'q': query.trim(),
+    if (await can(Permission.cadastrosGerir)) 'incluirInativos': 'true',
+  };
 }

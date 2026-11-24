@@ -21,6 +21,7 @@ class TypesPage extends StatefulWidget {
 
 class _TypesPageState extends State<TypesPage> {
   final controller = GetIt.instance.get<TypesController>();
+  late final searchController = TextEditingController(text: controller.query);
 
   /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
   bool get _canManage =>
@@ -33,15 +34,23 @@ class _TypesPageState extends State<TypesPage> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
-        if (controller.behaviourPage == Behaviour.loading) {
-          return Center(child: CircularProgressIndicator());
-        }
+        final l = AppLocalizations.of(context)!;
+        // O IView só assume a tela no erro: no loading a busca continua
+        // montada (não perde texto/foco a cada recarga).
         return IView(
-          behaviourPage: controller.behaviourPage,
+          behaviourPage: controller.behaviourPage == Behaviour.error
+              ? Behaviour.error
+              : Behaviour.success,
           onRetry: () => controller.loadTypes(),
           floatingActionButton: !_canManage
               ? SizedBox.shrink()
@@ -66,29 +75,40 @@ class _TypesPageState extends State<TypesPage> {
             child: Column(
               spacing: md,
               children: [
-                ITextField(label: AppLocalizations.of(context)!.typesSearch),
+                ITextField(
+                  label: l.typesSearch,
+                  controller: searchController,
+                  suffixIcon: Icon(Icons.search),
+                  maxLines: 1,
+                  textInputAction: TextInputAction.search,
+                  onChanged: controller.search,
+                ),
 
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.types.length,
-                    itemBuilder: (context, index) {
-                      final item = controller.types[index];
-                      return TypeCardComponent(
-                        item: item,
-                        onTap: !_canManage
-                            ? null
-                            : () async {
-                                final result = await context.pushNamed(
-                                  'add-or-edit-type',
-                                  extra: item,
-                                );
-                                if (result == true) {
-                                  controller.loadTypes();
-                                }
-                              },
-                      );
-                    },
-                  ),
+                  child: controller.behaviourPage == Behaviour.loading
+                      ? Center(child: CircularProgressIndicator())
+                      : controller.types.isEmpty
+                      ? Center(child: Text(l.typesEmpty))
+                      : ListView.builder(
+                          itemCount: controller.types.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.types[index];
+                            return TypeCardComponent(
+                              item: item,
+                              onTap: !_canManage
+                                  ? null
+                                  : () async {
+                                      final result = await context.pushNamed(
+                                        'add-or-edit-type',
+                                        extra: item,
+                                      );
+                                      if (result == true) {
+                                        controller.loadTypes();
+                                      }
+                                    },
+                            );
+                          },
+                        ),
                 ),
               ],
             ),

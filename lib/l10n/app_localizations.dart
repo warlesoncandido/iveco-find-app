@@ -1001,8 +1001,14 @@ abstract class AppLocalizations {
   /// No description provided for @typesSearch.
   ///
   /// In pt, this message translates to:
-  /// **'Pesquisar tipo'**
+  /// **'Pesquisar tipo (nome ou prefixo)'**
   String get typesSearch;
+
+  /// No description provided for @typesEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum tipo encontrado.'**
+  String get typesEmpty;
 
   /// No description provided for @supplierFormEditTitle.
   ///
@@ -1049,8 +1055,14 @@ abstract class AppLocalizations {
   /// No description provided for @suppliersSearch.
   ///
   /// In pt, this message translates to:
-  /// **'Pesquisar Fornecedor'**
+  /// **'Pesquisar fornecedor (razão social ou CNPJ)'**
   String get suppliersSearch;
+
+  /// No description provided for @suppliersEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum fornecedor encontrado.'**
+  String get suppliersEmpty;
 
   /// No description provided for @locationFormEditTitle.
   ///
@@ -1097,8 +1109,14 @@ abstract class AppLocalizations {
   /// No description provided for @locationsSearch.
   ///
   /// In pt, this message translates to:
-  /// **'Pesquisar localidade'**
+  /// **'Pesquisar localidade (nome)'**
   String get locationsSearch;
+
+  /// No description provided for @locationsEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma localidade encontrada.'**
+  String get locationsEmpty;
 
   /// No description provided for @provisionalPasswordTitle.
   ///

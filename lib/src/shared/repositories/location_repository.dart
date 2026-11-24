@@ -12,13 +12,19 @@ class LocationRepository {
   final ClientDio dio;
   LocationRepository({required this.dio});
 
+  /// `query` casa com o nome da Localidade (na API).
   Future<Either<Failure, PaginationModel>> getAllLocations({
     required int page,
+    String query = '',
   }) async {
     try {
       final result = await dio.get(
-        '/api/v1/localidades?pagina=$page&tamanhoPagina=25&ordem=asc&q=${await SessionHelper.includeInactiveQuery()}',
+        '/api/v1/localidades',
         isAuth: true,
+        queryParameters: await SessionHelper.listQuery(
+          page: page,
+          query: query,
+        ),
       );
       return Right(
         PaginationModel.fromJson(

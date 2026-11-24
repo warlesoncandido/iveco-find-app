@@ -13,13 +13,19 @@ class SupplierRepository {
 
   SupplierRepository({required this.dio});
 
+  /// `query` casa com a razão social ou o CNPJ (com ou sem máscara, na API).
   Future<Either<Failure, PaginationModel>> getSuppliers({
     required int page,
+    String query = '',
   }) async {
     try {
       final result = await dio.get(
-        '/api/v1/fornecedores?pagina=1&tamanhoPagina=25&ordem=asc&q=${await SessionHelper.includeInactiveQuery()}',
+        '/api/v1/fornecedores',
         isAuth: true,
+        queryParameters: await SessionHelper.listQuery(
+          page: page,
+          query: query,
+        ),
       );
       return Right(
         PaginationModel.fromJson(

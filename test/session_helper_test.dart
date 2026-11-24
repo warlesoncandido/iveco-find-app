@@ -45,7 +45,17 @@ void main() {
     await SectionRepository(
       dio: dio,
     ).getAllSectionByLocation(locationId: 'l1', page: 1);
-    return dio.calls.map((c) => c.path).toList();
+    // Tipos/Fornecedores/Localidades usam queryParameters; Setores, a URL.
+    return dio.calls
+        .map(
+          (c) => Uri(
+            path: c.path,
+            queryParameters: c.queryParameters?.map(
+              (k, v) => MapEntry(k, '$v'),
+            ),
+          ).toString(),
+        )
+        .toList();
   }
 
   test('ADMINISTRADOR lista cadastros com incluirInativos=true', () async {

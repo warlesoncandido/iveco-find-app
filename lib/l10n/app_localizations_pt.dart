@@ -497,7 +497,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get typeFormCreateTitle => 'Cadastrar Tipo';
 
   @override
-  String get typesSearch => 'Pesquisar tipo';
+  String get typesSearch => 'Pesquisar tipo (nome ou prefixo)';
+
+  @override
+  String get typesEmpty => 'Nenhum tipo encontrado.';
 
   @override
   String get supplierFormEditTitle => 'Editar Fornecedor';
@@ -522,7 +525,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Informe um telefone válido com DDD (10 ou 11 dígitos).';
 
   @override
-  String get suppliersSearch => 'Pesquisar Fornecedor';
+  String get suppliersSearch => 'Pesquisar fornecedor (razão social ou CNPJ)';
+
+  @override
+  String get suppliersEmpty => 'Nenhum fornecedor encontrado.';
 
   @override
   String get locationFormEditTitle => 'Editar Localidade';
@@ -546,7 +552,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get locationSectionsEmpty => 'Nenhum setor cadastrado.';
 
   @override
-  String get locationsSearch => 'Pesquisar localidade';
+  String get locationsSearch => 'Pesquisar localidade (nome)';
+
+  @override
+  String get locationsEmpty => 'Nenhuma localidade encontrada.';
 
   @override
   String get provisionalPasswordTitle => 'Senha provisória';
