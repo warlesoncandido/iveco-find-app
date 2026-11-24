@@ -2,6 +2,9 @@ class TypeModel {
   final String id;
   final String nome;
   final String prefixo;
+
+  /// Ativos deste Tipo são Kits e aceitam itens associados.
+  final bool kit;
   final bool ativo;
   final DateTime criadoEm;
   final DateTime atualizadoEm;
@@ -10,6 +13,7 @@ class TypeModel {
     required this.id,
     required this.nome,
     required this.prefixo,
+    this.kit = false,
     required this.ativo,
     required this.criadoEm,
     required this.atualizadoEm,
@@ -20,6 +24,7 @@ class TypeModel {
       id: json['id'] as String,
       nome: json['nome'] as String,
       prefixo: json['prefixo'] as String,
+      kit: json['kit'] as bool? ?? false,
       ativo: json['ativo'] as bool,
       criadoEm: DateTime.parse(json['criadoEm'] as String),
       atualizadoEm: DateTime.parse(json['atualizadoEm'] as String),
@@ -31,6 +36,7 @@ class TypeModel {
       'id': id,
       'nome': nome,
       'prefixo': prefixo,
+      'kit': kit,
       'ativo': ativo,
       'criadoEm': criadoEm.toIso8601String(),
       'atualizadoEm': atualizadoEm.toIso8601String(),

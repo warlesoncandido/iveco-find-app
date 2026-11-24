@@ -14,6 +14,9 @@ class AddOrEditTypeController extends ChangeNotifier {
 
   bool active = false;
 
+  /// "É Kit": Ativos deste Tipo aceitam itens associados.
+  bool kit = false;
+
   final nameController = TextEditingController();
   final prefixController = TextEditingController();
 
@@ -27,8 +30,14 @@ class AddOrEditTypeController extends ChangeNotifier {
       nameController.text = value.nome;
       prefixController.text = value.prefixo;
       active = value.ativo;
+      kit = value.kit;
       notifyListeners();
     }
+  }
+
+  void changeKit(bool value) {
+    kit = value;
+    notifyListeners();
   }
 
   void changeActive(bool value) {
@@ -45,6 +54,7 @@ class AddOrEditTypeController extends ChangeNotifier {
     final params = TypeParams(
       name: nameController.text,
       prefix: prefixController.text,
+      kit: kit,
     );
     Either<Failure, bool> result;
     if (type != null) {
@@ -71,5 +81,6 @@ class AddOrEditTypeController extends ChangeNotifier {
     nameController.clear();
     prefixController.clear();
     type = null;
+    kit = false;
   }
 }

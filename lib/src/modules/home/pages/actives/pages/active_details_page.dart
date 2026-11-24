@@ -8,8 +8,11 @@ import 'package:iveco_find/src/modules/home/pages/actives/components/active_hist
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_qr_card_component.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_status_tag.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/components/kit_add_item_dialog.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
+import 'package:iveco_find/src/shared/models/active_summary_model.dart';
 import 'package:iveco_find/src/shared/pages/error_page.dart';
+import 'package:iveco_find/src/shared/utils/messegers/snackbar_util.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
 import 'package:iveco_find/src/shared/utils/helpers/date_helper.dart';
 import 'package:iveco_find/src/shared/utils/helpers/money_helper.dart';
@@ -36,6 +39,66 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
     if (result != null) {
       controller.load();
     }
+  }
+
+  /// Abre a ficha de outro Ativo (Kit ou item). O controller é único: ao voltar,
+  /// recarrega esta ficha.
+  Future<void> _openActive(String id) async {
+    await context.pushNamed('active-details', extra: id);
+    if (mounted) controller.init(widget.id);
+  }
+
+  Future<void> _addKitItem() async {
+    final l = AppLocalizations.of(context)!;
+    final item = await showKitAddItemDialog(
+      context,
+      search: controller.searchKitCandidates,
+    );
+    if (item == null || !mounted) return;
+    await controller.addKitItem(
+      item,
+      onSuccess: () {
+        if (!mounted) return;
+        SnackbarUtil.showSuccess(context, message: l.kitAddItemSuccess);
+      },
+      onError: (message) {
+        if (!mounted) return;
+        SnackbarUtil.showError(context, message: message);
+      },
+    );
+  }
+
+  Future<void> _removeKitItem(ActiveSummaryModel item) async {
+    final l = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l.kitRemoveConfirmTitle),
+        content: Text(l.kitRemoveConfirmMessage(item.codigoInterno)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l.kitRemoveItem),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    await controller.removeKitItem(
+      item,
+      onSuccess: () {
+        if (!mounted) return;
+        SnackbarUtil.showSuccess(context, message: l.kitRemoveItemSuccess);
+      },
+      onError: (message) {
+        if (!mounted) return;
+        SnackbarUtil.showError(context, message: message);
+      },
+    );
   }
 
   @override
@@ -77,8 +140,13 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
         padding: EdgeInsets.all(md),
         children: [
           _buildHeader(active),
+          if (active.kit != null) ...[
+            SizedBox(height: md),
+            _buildKitMembership(active.kit!),
+          ],
           SizedBox(height: md),
           _buildInfo(active),
+          if (active.isKit) ...[SizedBox(height: md), _buildKitItems(active)],
           SizedBox(height: md),
           ActiveQrCardComponent(
             id: active.id,
@@ -177,6 +245,96 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
                   ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Item de Kit: aviso de pertencimento, com atalho para a ficha do Kit.
+  Widget _buildKitMembership(KitRefModel kit) {
+    final l = AppLocalizations.of(context)!;
+    return Card(
+      color: ITheme.colors.primary.withValues(alpha: 0.08),
+      child: ListTile(
+        leading: Icon(Icons.inventory_2, color: ITheme.colors.primary),
+        title: Text(
+          l.kitBelongsTo(kit.codigoInterno, kit.nome),
+          style: ITheme.styles.bodyBold(),
+        ),
+        subtitle: Text(l.kitBelongsToHint),
+        trailing: TextButton.icon(
+          onPressed: () => _openActive(kit.id),
+          icon: Icon(Icons.open_in_new),
+          label: Text(l.kitOpen),
+        ),
+      ),
+    );
+  }
+
+  /// Kit: itens associados, com destaque para os que estão em Status diferente.
+  Widget _buildKitItems(ActiveModel kit) {
+    final l = AppLocalizations.of(context)!;
+    return Card(
+      color: ITheme.colors.branco,
+      child: Padding(
+        padding: EdgeInsets.all(md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${l.kitItemsTitle} (${kit.items.length})',
+                    style: ITheme.styles.subTitleBold(),
+                  ),
+                ),
+                if (controller.canManageKitItems)
+                  TextButton.icon(
+                    onPressed: _addKitItem,
+                    icon: Icon(Icons.add),
+                    label: Text(l.kitAddItem),
+                  ),
+              ],
+            ),
+            if (kit.items.isEmpty)
+              Padding(
+                padding: EdgeInsets.only(top: sm),
+                child: Text(l.kitItemsEmpty, style: ITheme.styles.bodyLight()),
+              ),
+            for (final item in kit.items)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                onTap: () => _openActive(item.id),
+                leading: item.status != kit.status
+                    ? Tooltip(
+                        message: l.kitItemDifferentStatus,
+                        child: Icon(
+                          Icons.warning_amber,
+                          color: ITheme.colors.alizarin,
+                        ),
+                      )
+                    : Icon(Icons.build_outlined),
+                title: Text(item.nome),
+                subtitle: Text(
+                  item.status != kit.status
+                      ? '${item.codigoInterno} · ${l.kitItemDifferentStatus}'
+                      : item.codigoInterno,
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ActiveStatusTag(status: item.status),
+                    if (controller.canManageKitItems)
+                      IconButton(
+                        tooltip: l.kitRemoveItem,
+                        icon: Icon(Icons.link_off),
+                        onPressed: () => _removeKitItem(item),
+                      ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

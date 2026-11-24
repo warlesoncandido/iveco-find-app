@@ -33,9 +33,12 @@ class TypeCardComponent extends StatelessWidget {
                   children: [
                     Text(item.nome, style: ITheme.styles.bodyBold()),
                     Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.typePrefixValue(item.prefixo),
+                      [
+                        AppLocalizations.of(
+                          context,
+                        )!.typePrefixValue(item.prefixo),
+                        if (item.kit) AppLocalizations.of(context)!.typeKitTag,
+                      ].join(' · '),
                       style: ITheme.styles.bodyLight(
                         color: ITheme.colors.cinza145,
                       ),

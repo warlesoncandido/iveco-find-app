@@ -39,6 +39,56 @@ class _MoveActivePageState extends State<MoveActivePage> {
 
   bool _sameRef(RefModel a, RefModel b) => a.id == b.id;
 
+  /// Kit: quantos itens acompanharão e quais ficam para trás.
+  Widget _buildKitNotice(AppLocalizations l) {
+    final leftBehind = controller.leftBehindItems;
+    return Card(
+      color: ITheme.colors.primary.withValues(alpha: 0.08),
+      child: Padding(
+        padding: EdgeInsets.all(md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: xs,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.inventory_2, color: ITheme.colors.primary),
+                SizedBox(width: sm),
+                Expanded(
+                  child: Text(
+                    l.moveKitItemsFollow(controller.followingItems.length),
+                    style: ITheme.styles.bodyBold(),
+                  ),
+                ),
+              ],
+            ),
+            if (leftBehind.isNotEmpty) ...[
+              Text(
+                l.moveKitItemsLeftBehind,
+                style: ITheme.styles.bodySmallRegular(
+                  color: ITheme.colors.cinza90,
+                ),
+              ),
+              for (final item in leftBehind)
+                Row(
+                  spacing: sm,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${item.codigoInterno} · ${item.nome}',
+                        style: ITheme.styles.bodySmallRegular(),
+                      ),
+                    ),
+                    ActiveStatusTag(status: item.status),
+                  ],
+                ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -87,6 +137,7 @@ class _MoveActivePageState extends State<MoveActivePage> {
                         ActiveStatusTag(status: movement.statusDestino),
                       ],
                     ),
+                  if (widget.active.items.isNotEmpty) _buildKitNotice(l),
                   if (controller.showSection) ...[
                     ISelect<RefModel>(
                       label: l.moveDestinationLocality,
@@ -139,8 +190,13 @@ class _MoveActivePageState extends State<MoveActivePage> {
               onTap: () {
                 if (controller.formKey.currentState!.validate()) {
                   controller.save(
-                    onSuccess: () {
-                      SnackbarUtil.showSuccess(context, message: l.moveSuccess);
+                    onSuccess: (leftBehind) {
+                      SnackbarUtil.showSuccess(
+                        context,
+                        message: leftBehind > 0
+                            ? l.moveSuccessKitLeftBehind(leftBehind)
+                            : l.moveSuccess,
+                      );
                       context.pop(true);
                     },
                     onError: (message) {
