@@ -12,11 +12,19 @@ class TypesRepository {
   final ClientDio dio;
   TypesRepository({required this.dio});
 
-  Future<Either<Failure, PaginationModel>> getTypes({required int page}) async {
+  /// `query` casa com o nome ou o Prefixo do Tipo (na API).
+  Future<Either<Failure, PaginationModel>> getTypes({
+    required int page,
+    String query = '',
+  }) async {
     try {
       final result = await dio.get(
-        '/api/v1//tipos-ativo?pagina=$page&tamanhoPagina=25&ordem=asc&q=${await SessionHelper.includeInactiveQuery()}',
+        '/api/v1/tipos-ativo',
         isAuth: true,
+        queryParameters: await SessionHelper.listQuery(
+          page: page,
+          query: query,
+        ),
       );
       return Right(
         PaginationModel.fromJson(

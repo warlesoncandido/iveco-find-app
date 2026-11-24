@@ -21,6 +21,7 @@ class LocationPage extends StatefulWidget {
 
 class _LocationPageState extends State<LocationPage> {
   final controller = GetIt.instance.get<LocationController>();
+  late final searchController = TextEditingController(text: controller.query);
 
   /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
   bool get _canManage =>
@@ -33,15 +34,23 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
-        if (controller.behaviourPage == Behaviour.loading) {
-          return Center(child: CircularProgressIndicator());
-        }
+        final l = AppLocalizations.of(context)!;
+        // O IView só assume a tela no erro: no loading a busca continua
+        // montada (não perde texto/foco a cada recarga).
         return IView(
-          behaviourPage: controller.behaviourPage,
+          behaviourPage: controller.behaviourPage == Behaviour.error
+              ? Behaviour.error
+              : Behaviour.success,
           onRetry: () => controller.loadLocations(),
           floatingActionButton: !_canManage
               ? SizedBox.shrink()
@@ -69,32 +78,43 @@ class _LocationPageState extends State<LocationPage> {
               spacing: md,
               children: [
                 ITextField(
-                  label: AppLocalizations.of(context)!.locationsSearch,
+                  label: l.locationsSearch,
+                  controller: searchController,
+                  suffixIcon: Icon(Icons.search),
+                  maxLines: 1,
+                  textInputAction: TextInputAction.search,
+                  onChanged: controller.search,
                 ),
 
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.locations.length,
-                    itemBuilder: (context, index) {
-                      final item = controller.locations[index];
-                      return LocationCardComponent(
-                        item: item,
-                        onTap: () =>
-                            context.pushNamed('location-details', extra: item),
-                        onEdit: !_canManage
-                            ? null
-                            : () async {
-                                final result = await context.pushNamed(
-                                  'add-or-edit-location',
-                                  extra: item,
-                                );
-                                if (result == true) {
-                                  controller.loadLocations();
-                                }
-                              },
-                      );
-                    },
-                  ),
+                  child: controller.behaviourPage == Behaviour.loading
+                      ? Center(child: CircularProgressIndicator())
+                      : controller.locations.isEmpty
+                      ? Center(child: Text(l.locationsEmpty))
+                      : ListView.builder(
+                          itemCount: controller.locations.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.locations[index];
+                            return LocationCardComponent(
+                              item: item,
+                              onTap: () => context.pushNamed(
+                                'location-details',
+                                extra: item,
+                              ),
+                              onEdit: !_canManage
+                                  ? null
+                                  : () async {
+                                      final result = await context.pushNamed(
+                                        'add-or-edit-location',
+                                        extra: item,
+                                      );
+                                      if (result == true) {
+                                        controller.loadLocations();
+                                      }
+                                    },
+                            );
+                          },
+                        ),
                 ),
               ],
             ),

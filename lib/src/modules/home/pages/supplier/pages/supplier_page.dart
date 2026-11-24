@@ -10,6 +10,7 @@ import 'package:iveco_find/src/modules/home/pages/supplier/controllers/supplier_
 import 'package:iveco_find/src/shared/components/i_pagination.dart';
 import 'package:iveco_find/src/shared/components/i_text_field.dart';
 import 'package:iveco_find/src/shared/components/i_view.dart';
+import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
 
 class SupplierPage extends StatefulWidget {
   const SupplierPage({super.key});
@@ -20,6 +21,7 @@ class SupplierPage extends StatefulWidget {
 
 class _SupplierPageState extends State<SupplierPage> {
   final controller = GetIt.instance.get<SupplierController>();
+  late final searchController = TextEditingController(text: controller.query);
 
   /// Botões de cadastrar/editar só para quem tem `cadastros:gerir` (senão a API dá 403).
   bool get _canManage =>
@@ -32,12 +34,23 @@ class _SupplierPageState extends State<SupplierPage> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
       builder: (context, value) {
+        final l = AppLocalizations.of(context)!;
+        // O IView só assume a tela no erro: no loading a busca continua
+        // montada (não perde texto/foco a cada recarga).
         return IView(
-          behaviourPage: controller.behaviourpage,
+          behaviourPage: controller.behaviourPage == Behaviour.error
+              ? Behaviour.error
+              : Behaviour.success,
           onRetry: () => controller.loadSuppliers(),
           floatingActionButton: !_canManage
               ? SizedBox.shrink()
@@ -65,30 +78,39 @@ class _SupplierPageState extends State<SupplierPage> {
               spacing: md,
               children: [
                 ITextField(
-                  label: AppLocalizations.of(context)!.suppliersSearch,
+                  label: l.suppliersSearch,
+                  controller: searchController,
+                  suffixIcon: Icon(Icons.search),
+                  maxLines: 1,
+                  textInputAction: TextInputAction.search,
+                  onChanged: controller.search,
                 ),
 
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.suppliers.length,
-                    itemBuilder: (context, index) {
-                      final item = controller.suppliers[index];
-                      return SupplierCardComponent(
-                        item: item,
-                        onTap: !_canManage
-                            ? null
-                            : () async {
-                                final result = await context.pushNamed(
-                                  'add-or-edit-supplier',
-                                  extra: item,
-                                );
-                                if (result == true) {
-                                  controller.loadSuppliers();
-                                }
-                              },
-                      );
-                    },
-                  ),
+                  child: controller.behaviourPage == Behaviour.loading
+                      ? Center(child: CircularProgressIndicator())
+                      : controller.suppliers.isEmpty
+                      ? Center(child: Text(l.suppliersEmpty))
+                      : ListView.builder(
+                          itemCount: controller.suppliers.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.suppliers[index];
+                            return SupplierCardComponent(
+                              item: item,
+                              onTap: !_canManage
+                                  ? null
+                                  : () async {
+                                      final result = await context.pushNamed(
+                                        'add-or-edit-supplier',
+                                        extra: item,
+                                      );
+                                      if (result == true) {
+                                        controller.loadSuppliers();
+                                      }
+                                    },
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
