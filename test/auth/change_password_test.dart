@@ -15,6 +15,7 @@ void main() {
 
   final loginResponse = {
     'token': 'tok',
+    'refreshToken': 'ref',
     'trocaSenhaObrigatoria': true,
     'usuario': {
       'id': 'u1',
@@ -83,6 +84,7 @@ void main() {
       expect(ok, isTrue);
       expect(storedAuth()['trocaSenhaObrigatoria'], isFalse);
       expect(storedAuth()['token'], 'tok');
+      expect(storedAuth()['refreshToken'], 'ref');
       expect(storedAuth()['usuario']['perfil'], 'GESTOR');
       expect(controller.currentPasswordController.text, isEmpty);
       expect(controller.isLoading, isFalse);

@@ -55,6 +55,7 @@ class ChangePasswordController extends ChangeNotifier {
     final auth = AuthModel.fromJson(json.decode(raw));
     final updated = AuthModel(
       token: auth.token,
+      refreshToken: auth.refreshToken,
       needChangePassword: false,
       user: auth.user,
     );

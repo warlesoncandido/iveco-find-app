@@ -295,6 +295,7 @@
   "loginError": "Falha ao realizar login.",
   "changePasswordError": "Falha ao trocar a senha.",
   "logoutError": "Falha ao realizar o logout.",
+  "sessionExpired": "Sua sessão expirou. Entre novamente.",
   "categoriesFetchError": "Falha ao buscar categorias.",
   "subcategoriesFetchError": "Falha ao buscar subcategorias.",
   "dashboardSummaryFetchError": "Falha ao buscar o resumo do dashboard.",

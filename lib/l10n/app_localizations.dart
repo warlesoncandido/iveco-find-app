@@ -1304,6 +1304,12 @@ abstract class AppLocalizations {
   /// **'Falha ao realizar o logout.'**
   String get logoutError;
 
+  /// No description provided for @sessionExpired.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sua sessão expirou. Entre novamente.'**
+  String get sessionExpired;
+
   /// No description provided for @categoriesFetchError.
   ///
   /// In pt, this message translates to:

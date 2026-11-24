@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
@@ -32,7 +33,8 @@ import 'package:iveco_find/src/shared/repositories/types_repository.dart';
 import 'package:iveco_find/src/shared/repositories/user_repository.dart';
 
 class Injections {
-  static void inittialized() {
+  /// [onSessionExpired]: chamado quando a renovação da sessão é recusada (ver [ClientDio]).
+  static void inittialized({VoidCallback? onSessionExpired}) {
     //LOCALSTORAGE
     GetIt.instance.registerSingleton<LocalStorage>(LocalStorage());
 
@@ -43,7 +45,10 @@ class Injections {
 
     //DIO
     GetIt.instance.registerSingleton<ClientDio>(
-      ClientDio(storage: GetIt.instance.get<LocalStorage>()),
+      ClientDio(
+        storage: GetIt.instance.get<LocalStorage>(),
+        onSessionExpired: onSessionExpired,
+      ),
     );
 
     //REPOSITORIES

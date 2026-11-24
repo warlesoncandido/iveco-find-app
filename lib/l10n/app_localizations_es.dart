@@ -658,6 +658,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get logoutError => 'Error al cerrar sesión.';
 
   @override
+  String get sessionExpired => 'Tu sesión expiró. Inicia sesión de nuevo.';
+
+  @override
   String get categoriesFetchError => 'Error al buscar las categorías.';
 
   @override

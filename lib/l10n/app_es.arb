@@ -201,6 +201,7 @@
   "loginError": "Error al iniciar sesión.",
   "changePasswordError": "Error al cambiar la contraseña.",
   "logoutError": "Error al cerrar sesión.",
+  "sessionExpired": "Tu sesión expiró. Inicia sesión de nuevo.",
   "categoriesFetchError": "Error al buscar las categorías.",
   "subcategoriesFetchError": "Error al buscar las subcategorías.",
   "dashboardSummaryFetchError": "Error al buscar el resumen del panel.",

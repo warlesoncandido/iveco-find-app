@@ -656,6 +656,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get logoutError => 'Falha ao realizar o logout.';
 
   @override
+  String get sessionExpired => 'Sua sessão expirou. Entre novamente.';
+
+  @override
   String get categoriesFetchError => 'Falha ao buscar categorias.';
 
   @override

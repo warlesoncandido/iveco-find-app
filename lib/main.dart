@@ -12,11 +12,12 @@ import 'package:iveco_find/src/modules/home/pages/location/location_module.dart'
 import 'package:iveco_find/src/modules/home/pages/supplier/supplier_module.dart';
 import 'package:iveco_find/src/modules/home/pages/types/type_module.dart';
 import 'package:iveco_find/src/modules/home/pages/user/user_module.dart';
+import 'package:iveco_find/src/shared/components/i_snackbar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // DEPENDENCIES INJECTION
-  Injections.inittialized();
+  Injections.inittialized(onSessionExpired: _onSessionExpired);
   // Idioma salvo (ou o do dispositivo) antes do primeiro frame, inclusive no login.
   await GetIt.instance.get<LocaleController>().load();
   runApp(const MyApp());
@@ -48,7 +49,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Navigator raiz do app: permite navegar e mostrar avisos fora da árvore de widgets.
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+/// Renovação da sessão recusada (o `auth` salvo já foi removido): volta ao login com aviso.
+void _onSessionExpired() {
+  _router.goNamed('/');
+  final context = rootNavigatorKey.currentContext;
+  if (context == null || !context.mounted) return;
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  if (messenger == null) return;
+  messenger.hideCurrentSnackBar();
+  SnackBarUtils.showSnackBarError(context, L10n.current.sessionExpired);
+}
+
 final _router = GoRouter(
+  navigatorKey: rootNavigatorKey,
   routes: [
     authModule,
     changePasswordModule,
