@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/shared/enums/movement_type.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
+import 'package:iveco_find/src/shared/models/active_summary_model.dart';
 import 'package:iveco_find/src/shared/models/ref_model.dart';
 import 'package:iveco_find/src/shared/models/valid_movement_model.dart';
 import 'package:iveco_find/src/shared/params/movement_params.dart';
@@ -41,6 +42,22 @@ class MoveActiveController extends ChangeNotifier {
       movement != null && movement!.setor != SectionRule.proibido;
 
   bool get sectionRequired => movement?.setor == SectionRule.obrigatorio;
+
+  /// Kit: itens que acompanham a movimentação (mesmo Status do Kit). Na
+  /// Transferência, quem já está no Setor de destino não tem o que mudar e fica.
+  List<ActiveSummaryModel> get followingItems => active.items.where((item) {
+    if (item.status != active.status) return false;
+    if (sectionRequired && section != null && item.setor.id == section!.id) {
+      return false;
+    }
+    return true;
+  }).toList();
+
+  /// Kit: itens que não acompanham a movimentação (Status diferente do Kit).
+  /// Na Transferência, quem já está no Setor de destino não entra aqui: não
+  /// muda, mas fica onde o Kit foi.
+  List<ActiveSummaryModel> get leftBehindItems =>
+      active.items.where((e) => e.status != active.status).toList();
 
   Future<void> init(ActiveModel value, List<ValidMovementModel> valid) async {
     active = value;
@@ -96,12 +113,14 @@ class MoveActiveController extends ChangeNotifier {
     return null;
   }
 
+  /// `onSuccess` recebe quantos itens do Kit ficaram para trás (0 fora de Kit).
   Future<void> save({
-    required Function() onSuccess,
+    required Function(int leftBehind) onSuccess,
     required Function(String message) onError,
   }) async {
     behaviour = Behaviour.loading;
     notifyListeners();
+    final leftBehind = leftBehindItems.length;
 
     // Responsável só vai se mudou; vazio limpa o campo.
     final responsible = responsibleController.text.trim();
@@ -121,6 +140,6 @@ class MoveActiveController extends ChangeNotifier {
     behaviour = null;
     notifyListeners();
 
-    result.fold((l) => onError(l.message!), (r) => onSuccess());
+    result.fold((l) => onError(l.message!), (r) => onSuccess(leftBehind));
   }
 }

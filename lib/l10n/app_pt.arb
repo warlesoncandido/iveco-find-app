@@ -312,5 +312,59 @@
   "userFetchError": "Falha ao buscar usuário.",
   "userCreateError": "Falha ao cadastrar usuário.",
   "userUpdateError": "Falha ao atualizar usuário.",
-  "userResetPasswordError": "Falha ao redefinir senha."
+  "userResetPasswordError": "Falha ao redefinir senha.",
+  "typeIsKit": "É Kit",
+  "typeIsKitHint": "Ativos deste tipo aceitam itens associados, que acompanham as movimentações.",
+  "typeKitTag": "Kit",
+  "kitItemsTitle": "Itens do Kit",
+  "kitItemsEmpty": "Nenhum item associado.",
+  "kitAddItem": "Adicionar item",
+  "kitAddItemTitle": "Adicionar item ao Kit",
+  "kitAddItemSearch": "Pesquisar ativo",
+  "kitAddItemEmpty": "Nenhum ativo disponível no mesmo status do Kit.",
+  "kitAddItemSuccess": "Item adicionado ao Kit!",
+  "kitRemoveItem": "Remover do Kit",
+  "kitRemoveItemSuccess": "Item removido do Kit!",
+  "kitRemoveConfirmTitle": "Remover item do Kit",
+  "kitRemoveConfirmMessage": "O ativo {code} deixará de acompanhar as movimentações do Kit. Deseja continuar?",
+  "@kitRemoveConfirmMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "kitItemDifferentStatus": "Status diferente do Kit: não acompanha as movimentações.",
+  "kitBelongsTo": "Pertence ao Kit {code} · {name}",
+  "@kitBelongsTo": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "kitBelongsToHint": "Este item acompanha as movimentações do Kit. Para movimentá-lo ou baixá-lo sozinho, remova-o do Kit.",
+  "kitOpen": "Abrir Kit",
+  "kitItemAddError": "Falha ao adicionar item ao Kit.",
+  "kitItemRemoveError": "Falha ao remover item do Kit.",
+  "moveKitItemsFollow": "{count, plural, =0{Nenhum item acompanhará a movimentação.} =1{1 item acompanhará a movimentação.} other{{count} itens acompanharão a movimentação.}}",
+  "@moveKitItemsFollow": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moveKitItemsLeftBehind": "Não acompanharão:",
+  "moveSuccessKitLeftBehind": "Movimentação registrada. {count, plural, =1{1 item não acompanhou o Kit.} other{{count} itens não acompanharam o Kit.}}",
+  "@moveSuccessKitLeftBehind": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -1,5 +1,27 @@
 import 'package:iveco_find/src/shared/enums/active_status.dart';
+import 'package:iveco_find/src/shared/models/active_summary_model.dart';
 import 'package:iveco_find/src/shared/models/ref_model.dart';
+
+/// Referência ao Kit ao qual um item pertence.
+class KitRefModel {
+  final String id;
+  final String codigoInterno;
+  final String nome;
+
+  KitRefModel({
+    required this.id,
+    required this.codigoInterno,
+    required this.nome,
+  });
+
+  factory KitRefModel.fromJson(Map<String, dynamic> json) {
+    return KitRefModel(
+      id: json['id'] as String,
+      codigoInterno: json['codigoInterno'] as String,
+      nome: json['nome'] as String,
+    );
+  }
+}
 
 class ActiveModel {
   final String id;
@@ -28,6 +50,15 @@ class ActiveModel {
   final DateTime criadoEm;
   final DateTime atualizadoEm;
 
+  /// O Tipo do Ativo é marcado como Kit: aceita itens associados.
+  final bool isKit;
+
+  /// Kit ao qual o Ativo pertence como item.
+  final KitRefModel? kit;
+
+  /// Itens associados (só em Kit).
+  final List<ActiveSummaryModel> items;
+
   ActiveModel({
     required this.id,
     required this.codigoInterno,
@@ -54,9 +85,23 @@ class ActiveModel {
     required this.versao,
     required this.criadoEm,
     required this.atualizadoEm,
+    this.isKit = false,
+    this.kit,
+    this.items = const [],
   });
 
   bool get isBaixado => status == ActiveStatus.baixado;
+
+  /// Item associado a um Kit: não se movimenta nem se baixa sozinho.
+  bool get isKitItem => kit != null;
+
+  /// Itens no mesmo Status do Kit: acompanham as movimentações.
+  List<ActiveSummaryModel> get itemsSameStatus =>
+      items.where((e) => e.status == status).toList();
+
+  /// Itens em Status diferente do Kit: não acompanham as movimentações.
+  List<ActiveSummaryModel> get itemsDifferentStatus =>
+      items.where((e) => e.status != status).toList();
 
   factory ActiveModel.fromJson(Map<String, dynamic> json) {
     return ActiveModel(
@@ -93,6 +138,11 @@ class ActiveModel {
       versao: json['versao'] as int,
       criadoEm: DateTime.parse(json['criadoEm'] as String),
       atualizadoEm: DateTime.parse(json['atualizadoEm'] as String),
+      isKit: json['ehKit'] as bool? ?? false,
+      kit: json['kit'] != null ? KitRefModel.fromJson(json['kit']) : null,
+      items: ((json['itens'] as List?) ?? const [])
+          .map((e) => ActiveSummaryModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

@@ -157,6 +157,7 @@ class Injections {
       ActiveDetailsController(
         repository: GetIt.instance.get<ActiveRepository>(),
         storage: GetIt.instance.get<LocalStorage>(),
+        typesRepository: GetIt.instance.get<TypesRepository>(),
       ),
     );
     GetIt.instance.registerSingleton<MoveActiveController>(

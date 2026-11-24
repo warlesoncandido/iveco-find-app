@@ -21,6 +21,7 @@ class ActiveRepository {
     required int page,
     String query = '',
     String? status,
+    int pageSize = 25,
   }) async {
     try {
       final result = await dio.get(
@@ -28,7 +29,7 @@ class ActiveRepository {
         isAuth: true,
         queryParameters: {
           'pagina': page,
-          'tamanhoPagina': 25,
+          'tamanhoPagina': pageSize,
           'ordem': 'asc',
           'q': query,
           if (status != null) 'status': status,
@@ -154,6 +155,42 @@ class ActiveRepository {
       return Right(ActiveModel.fromJson(result.data));
     } catch (e) {
       return Left(_failure(e, L10n.current.writeOffError));
+    }
+  }
+
+  /// Associa `itemId` ao Kit `kitId`, com a `versao` do item. Devolve a ficha do Kit.
+  Future<Either<Failure, ActiveModel>> addKitItem({
+    required String kitId,
+    required String itemId,
+    required int itemVersion,
+  }) async {
+    try {
+      final result = await dio.post(
+        '/api/v1/ativos/$kitId/itens',
+        isAuth: true,
+        data: {'itemId': itemId, 'versao': itemVersion},
+      );
+      return Right(ActiveModel.fromJson(result.data));
+    } catch (e) {
+      return Left(_failure(e, L10n.current.kitItemAddError));
+    }
+  }
+
+  /// Desassocia `itemId` do Kit `kitId`, com a `versao` do item. Devolve a ficha do Kit.
+  Future<Either<Failure, ActiveModel>> removeKitItem({
+    required String kitId,
+    required String itemId,
+    required int itemVersion,
+  }) async {
+    try {
+      final result = await dio.post(
+        '/api/v1/ativos/$kitId/itens/$itemId/remocao',
+        isAuth: true,
+        data: {'versao': itemVersion},
+      );
+      return Right(ActiveModel.fromJson(result.data));
+    } catch (e) {
+      return Left(_failure(e, L10n.current.kitItemRemoveError));
     }
   }
 

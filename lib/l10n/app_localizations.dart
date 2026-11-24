@@ -1411,6 +1411,144 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Falha ao redefinir senha.'**
   String get userResetPasswordError;
+
+  /// No description provided for @typeIsKit.
+  ///
+  /// In pt, this message translates to:
+  /// **'É Kit'**
+  String get typeIsKit;
+
+  /// No description provided for @typeIsKitHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ativos deste tipo aceitam itens associados, que acompanham as movimentações.'**
+  String get typeIsKitHint;
+
+  /// No description provided for @typeKitTag.
+  ///
+  /// In pt, this message translates to:
+  /// **'Kit'**
+  String get typeKitTag;
+
+  /// No description provided for @kitItemsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Itens do Kit'**
+  String get kitItemsTitle;
+
+  /// No description provided for @kitItemsEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum item associado.'**
+  String get kitItemsEmpty;
+
+  /// No description provided for @kitAddItem.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar item'**
+  String get kitAddItem;
+
+  /// No description provided for @kitAddItemTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar item ao Kit'**
+  String get kitAddItemTitle;
+
+  /// No description provided for @kitAddItemSearch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pesquisar ativo'**
+  String get kitAddItemSearch;
+
+  /// No description provided for @kitAddItemEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum ativo disponível no mesmo status do Kit.'**
+  String get kitAddItemEmpty;
+
+  /// No description provided for @kitAddItemSuccess.
+  ///
+  /// In pt, this message translates to:
+  /// **'Item adicionado ao Kit!'**
+  String get kitAddItemSuccess;
+
+  /// No description provided for @kitRemoveItem.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover do Kit'**
+  String get kitRemoveItem;
+
+  /// No description provided for @kitRemoveItemSuccess.
+  ///
+  /// In pt, this message translates to:
+  /// **'Item removido do Kit!'**
+  String get kitRemoveItemSuccess;
+
+  /// No description provided for @kitRemoveConfirmTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover item do Kit'**
+  String get kitRemoveConfirmTitle;
+
+  /// No description provided for @kitRemoveConfirmMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'O ativo {code} deixará de acompanhar as movimentações do Kit. Deseja continuar?'**
+  String kitRemoveConfirmMessage(String code);
+
+  /// No description provided for @kitItemDifferentStatus.
+  ///
+  /// In pt, this message translates to:
+  /// **'Status diferente do Kit: não acompanha as movimentações.'**
+  String get kitItemDifferentStatus;
+
+  /// No description provided for @kitBelongsTo.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pertence ao Kit {code} · {name}'**
+  String kitBelongsTo(String code, String name);
+
+  /// No description provided for @kitBelongsToHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este item acompanha as movimentações do Kit. Para movimentá-lo ou baixá-lo sozinho, remova-o do Kit.'**
+  String get kitBelongsToHint;
+
+  /// No description provided for @kitOpen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir Kit'**
+  String get kitOpen;
+
+  /// No description provided for @kitItemAddError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Falha ao adicionar item ao Kit.'**
+  String get kitItemAddError;
+
+  /// No description provided for @kitItemRemoveError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Falha ao remover item do Kit.'**
+  String get kitItemRemoveError;
+
+  /// No description provided for @moveKitItemsFollow.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =0{Nenhum item acompanhará a movimentação.} =1{1 item acompanhará a movimentação.} other{{count} itens acompanharão a movimentação.}}'**
+  String moveKitItemsFollow(int count);
+
+  /// No description provided for @moveKitItemsLeftBehind.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não acompanharão:'**
+  String get moveKitItemsLeftBehind;
+
+  /// No description provided for @moveSuccessKitLeftBehind.
+  ///
+  /// In pt, this message translates to:
+  /// **'Movimentação registrada. {count, plural, =1{1 item não acompanhou o Kit.} other{{count} itens não acompanharam o Kit.}}'**
+  String moveSuccessKitLeftBehind(int count);
 }
 
 class _AppLocalizationsDelegate

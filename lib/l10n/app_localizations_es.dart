@@ -712,4 +712,98 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get userResetPasswordError => 'Error al restablecer la contraseña.';
+
+  @override
+  String get typeIsKit => 'Es Kit';
+
+  @override
+  String get typeIsKitHint =>
+      'Los activos de este tipo aceptan ítems asociados, que acompañan los movimientos.';
+
+  @override
+  String get typeKitTag => 'Kit';
+
+  @override
+  String get kitItemsTitle => 'Ítems del Kit';
+
+  @override
+  String get kitItemsEmpty => 'Ningún ítem asociado.';
+
+  @override
+  String get kitAddItem => 'Agregar ítem';
+
+  @override
+  String get kitAddItemTitle => 'Agregar ítem al Kit';
+
+  @override
+  String get kitAddItemSearch => 'Buscar activo';
+
+  @override
+  String get kitAddItemEmpty =>
+      'Ningún activo disponible en el mismo estado del Kit.';
+
+  @override
+  String get kitAddItemSuccess => '¡Ítem agregado al Kit!';
+
+  @override
+  String get kitRemoveItem => 'Quitar del Kit';
+
+  @override
+  String get kitRemoveItemSuccess => '¡Ítem quitado del Kit!';
+
+  @override
+  String get kitRemoveConfirmTitle => 'Quitar ítem del Kit';
+
+  @override
+  String kitRemoveConfirmMessage(String code) {
+    return 'El activo $code dejará de acompañar los movimientos del Kit. ¿Desea continuar?';
+  }
+
+  @override
+  String get kitItemDifferentStatus =>
+      'Estado diferente del Kit: no acompaña los movimientos.';
+
+  @override
+  String kitBelongsTo(String code, String name) {
+    return 'Pertenece al Kit $code · $name';
+  }
+
+  @override
+  String get kitBelongsToHint =>
+      'Este ítem acompaña los movimientos del Kit. Para moverlo o darlo de baja solo, quítelo del Kit.';
+
+  @override
+  String get kitOpen => 'Abrir Kit';
+
+  @override
+  String get kitItemAddError => 'Error al agregar el ítem al Kit.';
+
+  @override
+  String get kitItemRemoveError => 'Error al quitar el ítem del Kit.';
+
+  @override
+  String moveKitItemsFollow(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ítems acompañarán el movimiento.',
+      one: '1 ítem acompañará el movimiento.',
+      zero: 'Ningún ítem acompañará el movimiento.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get moveKitItemsLeftBehind => 'No acompañarán:';
+
+  @override
+  String moveSuccessKitLeftBehind(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ítems no acompañaron al Kit.',
+      one: '1 ítem no acompañó al Kit.',
+    );
+    return 'Movimiento registrado. $_temp0';
+  }
 }

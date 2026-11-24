@@ -3,6 +3,7 @@ import 'package:iveco_find/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
 import 'package:iveco_find/src/modules/home/pages/types/controllers/add_or_edit_type_controller.dart';
 import 'package:iveco_find/src/shared/components/i_button.dart';
@@ -77,6 +78,22 @@ class _AddOrEditTypePageState extends State<AddOrEditTypePage> {
                       }
                       return null;
                     },
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ISwitch(
+                        value: controller.kit,
+                        onChanged: controller.changeKit,
+                        label: l.typeIsKit,
+                      ),
+                      Text(
+                        l.typeIsKitHint,
+                        style: ITheme.styles.bodySmallLight(
+                          color: ITheme.colors.cinza90,
+                        ),
+                      ),
+                    ],
                   ),
                   if (controller.type != null)
                     ISwitch(
