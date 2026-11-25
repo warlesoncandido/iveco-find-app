@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: ITheme.colors.primary,
           foregroundColor: ITheme.colors.background,
         ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         scaffoldBackgroundColor: ITheme.colors.background,
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: ITheme.colors.primary,

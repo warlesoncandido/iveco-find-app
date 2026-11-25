@@ -7,6 +7,7 @@ import 'package:iveco_find/src/modules/auth/controllers/auth_controller.dart';
 import 'package:iveco_find/src/modules/auth/controllers/change_password_controller.dart';
 import 'package:iveco_find/src/modules/home/controllers/home_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/dashboard/controllers/dashboard_controller.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_attachments_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/actives_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/add_or_edit_active_controller.dart';
@@ -23,6 +24,10 @@ import 'package:iveco_find/src/modules/home/pages/types/controllers/types_contro
 import 'package:iveco_find/src/modules/home/pages/user/controllers/add_or_edit_user_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/user/controllers/user_controller.dart';
 import 'package:iveco_find/src/shared/repositories/active_repository.dart';
+import 'package:iveco_find/src/shared/repositories/attachment_repository.dart';
+import 'package:iveco_find/src/shared/services/attachment_opener/attachment_opener.dart';
+import 'package:iveco_find/src/shared/services/attachment_cache/attachment_cache.dart';
+import 'package:iveco_find/src/shared/services/attachment_compressor.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
 import 'package:iveco_find/src/shared/repositories/category_repository.dart';
 import 'package:iveco_find/src/shared/repositories/dashboard_repository.dart';
@@ -73,6 +78,9 @@ class Injections {
     );
     GetIt.instance.registerSingleton<ActiveRepository>(
       ActiveRepository(dio: GetIt.instance.get<ClientDio>()),
+    );
+    GetIt.instance.registerSingleton<AttachmentRepository>(
+      AttachmentRepository(dio: GetIt.instance.get<ClientDio>()),
     );
     GetIt.instance.registerSingleton<UserRepository>(
       UserRepository(dio: GetIt.instance.get<ClientDio>()),
@@ -163,6 +171,14 @@ class Injections {
         repository: GetIt.instance.get<ActiveRepository>(),
         storage: GetIt.instance.get<LocalStorage>(),
         typesRepository: GetIt.instance.get<TypesRepository>(),
+      ),
+    );
+    GetIt.instance.registerSingleton<ActiveAttachmentsController>(
+      ActiveAttachmentsController(
+        repository: GetIt.instance.get<AttachmentRepository>(),
+        opener: PlatformAttachmentOpener(),
+        compressor: const AttachmentCompressor(),
+        cache: AttachmentCache.platform(),
       ),
     );
     GetIt.instance.registerSingleton<MoveActiveController>(

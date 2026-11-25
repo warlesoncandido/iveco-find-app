@@ -818,4 +818,113 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return 'Movimiento registrado. $_temp0';
   }
+
+  @override
+  String get activeTabDetails => 'Ficha';
+
+  @override
+  String get activeTabFiles => 'Archivos';
+
+  @override
+  String get attachmentsEmpty => 'Ningún archivo adjunto.';
+
+  @override
+  String get attachmentAdd => 'Agregar archivo';
+
+  @override
+  String get attachmentPickFile => 'Elegir archivo';
+
+  @override
+  String get attachmentTakePhoto => 'Tomar foto';
+
+  @override
+  String get attachmentCategoryTitle => 'Categoría del archivo';
+
+  @override
+  String get attachmentCategoryNf => 'Factura';
+
+  @override
+  String get attachmentCategoryPhoto => 'Foto';
+
+  @override
+  String get attachmentCategoryManual => 'Manual';
+
+  @override
+  String get attachmentCategoryCertificate => 'Certificado';
+
+  @override
+  String get attachmentCategoryTerm => 'Término';
+
+  @override
+  String get attachmentCategoryReport => 'Informe técnico';
+
+  @override
+  String get attachmentSend => 'Enviar';
+
+  @override
+  String attachmentUploading(int percent) {
+    return 'Enviando archivo… $percent%';
+  }
+
+  @override
+  String get attachmentUploadSuccess => '¡Archivo enviado!';
+
+  @override
+  String get attachmentFileName => 'Nombre del archivo';
+
+  @override
+  String get attachmentRename => 'Renombrar';
+
+  @override
+  String get attachmentRenameSuccess => '¡Archivo renombrado!';
+
+  @override
+  String get attachmentRemove => 'Eliminar';
+
+  @override
+  String get attachmentRemoveConfirmTitle => 'Eliminar archivo';
+
+  @override
+  String attachmentRemoveConfirmMessage(String name) {
+    return '¿Eliminar \"$name\"? Esta acción no se puede deshacer.';
+  }
+
+  @override
+  String get attachmentRemoveSuccess => '¡Archivo eliminado!';
+
+  @override
+  String get attachmentsFetchError =>
+      'Error al cargar los archivos del activo.';
+
+  @override
+  String get attachmentUploadError => 'Error al enviar el archivo.';
+
+  @override
+  String get attachmentDownloadError => 'Error al descargar el archivo.';
+
+  @override
+  String get attachmentOpenError =>
+      'No fue posible abrir el archivo en este dispositivo.';
+
+  @override
+  String get attachmentRenameError => 'Error al renombrar el archivo.';
+
+  @override
+  String get attachmentRemoveError => 'Error al eliminar el archivo.';
+
+  @override
+  String get attachmentsUnavailable =>
+      'Archivos no disponibles: el servidor no tiene almacenamiento configurado.';
+
+  @override
+  String get attachmentTooLarge => 'El archivo supera los 20 MB.';
+
+  @override
+  String get attachmentPreparing => 'Preparando archivo…';
+
+  @override
+  String get attachmentOpenExternal => 'Abrir en otra app';
+
+  @override
+  String get attachmentRendering => 'Cargando páginas…';
 }

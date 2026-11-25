@@ -4,9 +4,11 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/theme/i_theme.dart';
 import 'package:iveco_find/src/core/theme/spaccing.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/components/active_attachments_tab.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_history_item.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_qr_card_component.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_status_tag.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_attachments_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/kit_add_item_dialog.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
@@ -16,6 +18,18 @@ import 'package:iveco_find/src/shared/utils/messegers/snackbar_util.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
 import 'package:iveco_find/src/shared/utils/helpers/date_helper.dart';
 import 'package:iveco_find/src/shared/utils/helpers/money_helper.dart';
+
+/// (Re)carrega a ficha e a aba Arquivos do Ativo [id]. Os controllers são únicos:
+/// ao voltar da ficha de outro Ativo (Kit ou item), os dois precisam voltar a este.
+@visibleForTesting
+void initActiveDetails(
+  String id, {
+  required ActiveDetailsController details,
+  required ActiveAttachmentsController attachments,
+}) {
+  details.init(id);
+  attachments.init(id);
+}
 
 class ActiveDetailsPage extends StatefulWidget {
   final String id;
@@ -27,10 +41,12 @@ class ActiveDetailsPage extends StatefulWidget {
 
 class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
   final controller = GetIt.instance.get<ActiveDetailsController>();
+  final attachmentsController = GetIt.instance
+      .get<ActiveAttachmentsController>();
 
   @override
   void initState() {
-    controller.init(widget.id);
+    _init();
     super.initState();
   }
 
@@ -45,8 +61,14 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
   /// recarrega esta ficha.
   Future<void> _openActive(String id) async {
     await context.pushNamed('active-details', extra: id);
-    if (mounted) controller.init(widget.id);
+    if (mounted) _init();
   }
+
+  void _init() => initActiveDetails(
+    widget.id,
+    details: controller,
+    attachments: attachmentsController,
+  );
 
   Future<void> _addKitItem() async {
     final l = AppLocalizations.of(context)!;
@@ -108,25 +130,56 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
       builder: (context, value) {
         final active = controller.active;
         final l = AppLocalizations.of(context)!;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(l.activeDetailsTitle),
-            actions: [
-              if (controller.behaviourPage == Behaviour.success &&
-                  controller.canEdit)
-                IconButton(
-                  tooltip: l.commonEdit,
-                  icon: Icon(Icons.edit),
-                  onPressed: () =>
-                      _openAndReload('add-or-edit-active', active!),
-                ),
-            ],
+        final loaded = controller.behaviourPage == Behaviour.success;
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(l.activeDetailsTitle),
+              bottom: loaded
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(kTextTabBarHeight),
+                      child: ColoredBox(
+                        color: ITheme.colors.branco,
+                        child: TabBar(
+                          labelColor: ITheme.colors.textColor,
+                          unselectedLabelColor: ITheme.colors.textColor
+                              .withValues(alpha: 0.6),
+                          indicatorColor: ITheme.colors.textColor,
+                          dividerColor: ITheme.colors.cinza225,
+                          tabs: [
+                            Tab(text: l.activeTabDetails),
+                            Tab(text: l.activeTabFiles),
+                          ],
+                        ),
+                      ),
+                    )
+                  : null,
+              actions: [
+                if (controller.behaviourPage == Behaviour.success &&
+                    controller.canEdit)
+                  IconButton(
+                    tooltip: l.commonEdit,
+                    icon: Icon(Icons.edit),
+                    onPressed: () =>
+                        _openAndReload('add-or-edit-active', active!),
+                  ),
+              ],
+            ),
+            body: switch (controller.behaviourPage) {
+              Behaviour.loading => Center(child: CircularProgressIndicator()),
+              Behaviour.error => ErrorPage(onRetry: controller.load),
+              Behaviour.success => TabBarView(
+                children: [
+                  _buildBody(active!),
+                  ActiveAttachmentsTab(
+                    controller: attachmentsController,
+                    canEdit: controller.canEdit,
+                  ),
+                ],
+              ),
+            },
           ),
-          body: switch (controller.behaviourPage) {
-            Behaviour.loading => Center(child: CircularProgressIndicator()),
-            Behaviour.error => ErrorPage(onRetry: controller.load),
-            Behaviour.success => _buildBody(active!),
-          },
         );
       },
     );

@@ -370,5 +370,53 @@
         "type": "int"
       }
     }
-  }
+  },
+  "activeTabDetails": "Ficha",
+  "activeTabFiles": "Arquivos",
+  "attachmentsEmpty": "Nenhum arquivo anexado.",
+  "attachmentAdd": "Adicionar arquivo",
+  "attachmentPickFile": "Escolher arquivo",
+  "attachmentTakePhoto": "Tirar foto",
+  "attachmentCategoryTitle": "Categoria do arquivo",
+  "attachmentCategoryNf": "Nota fiscal",
+  "attachmentCategoryPhoto": "Foto",
+  "attachmentCategoryManual": "Manual",
+  "attachmentCategoryCertificate": "Certificado",
+  "attachmentCategoryTerm": "Termo",
+  "attachmentCategoryReport": "Laudo",
+  "attachmentSend": "Enviar",
+  "attachmentUploading": "Enviando arquivo… {percent}%",
+  "@attachmentUploading": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "attachmentUploadSuccess": "Arquivo enviado!",
+  "attachmentFileName": "Nome do arquivo",
+  "attachmentRename": "Renomear",
+  "attachmentRenameSuccess": "Arquivo renomeado!",
+  "attachmentRemove": "Remover",
+  "attachmentRemoveConfirmTitle": "Remover arquivo",
+  "attachmentRemoveConfirmMessage": "Remover \"{name}\"? Essa ação não pode ser desfeita.",
+  "@attachmentRemoveConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "attachmentRemoveSuccess": "Arquivo removido!",
+  "attachmentsFetchError": "Erro ao carregar os arquivos do ativo.",
+  "attachmentUploadError": "Erro ao enviar o arquivo.",
+  "attachmentDownloadError": "Erro ao baixar o arquivo.",
+  "attachmentOpenError": "Não foi possível abrir o arquivo neste dispositivo.",
+  "attachmentRenameError": "Erro ao renomear o arquivo.",
+  "attachmentRemoveError": "Erro ao remover o arquivo.",
+  "attachmentsUnavailable": "Arquivos indisponíveis: o servidor não tem armazenamento configurado.",
+  "attachmentTooLarge": "O arquivo passa de 20 MB.",
+  "attachmentPreparing": "Preparando arquivo…",
+  "attachmentOpenExternal": "Abrir em outro app",
+  "attachmentRendering": "Carregando páginas…"
 }

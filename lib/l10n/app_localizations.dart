@@ -1573,6 +1573,210 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Movimentação registrada. {count, plural, =1{1 item não acompanhou o Kit.} other{{count} itens não acompanharam o Kit.}}'**
   String moveSuccessKitLeftBehind(int count);
+
+  /// No description provided for @activeTabDetails.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ficha'**
+  String get activeTabDetails;
+
+  /// No description provided for @activeTabFiles.
+  ///
+  /// In pt, this message translates to:
+  /// **'Arquivos'**
+  String get activeTabFiles;
+
+  /// No description provided for @attachmentsEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum arquivo anexado.'**
+  String get attachmentsEmpty;
+
+  /// No description provided for @attachmentAdd.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar arquivo'**
+  String get attachmentAdd;
+
+  /// No description provided for @attachmentPickFile.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolher arquivo'**
+  String get attachmentPickFile;
+
+  /// No description provided for @attachmentTakePhoto.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tirar foto'**
+  String get attachmentTakePhoto;
+
+  /// No description provided for @attachmentCategoryTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Categoria do arquivo'**
+  String get attachmentCategoryTitle;
+
+  /// No description provided for @attachmentCategoryNf.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nota fiscal'**
+  String get attachmentCategoryNf;
+
+  /// No description provided for @attachmentCategoryPhoto.
+  ///
+  /// In pt, this message translates to:
+  /// **'Foto'**
+  String get attachmentCategoryPhoto;
+
+  /// No description provided for @attachmentCategoryManual.
+  ///
+  /// In pt, this message translates to:
+  /// **'Manual'**
+  String get attachmentCategoryManual;
+
+  /// No description provided for @attachmentCategoryCertificate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Certificado'**
+  String get attachmentCategoryCertificate;
+
+  /// No description provided for @attachmentCategoryTerm.
+  ///
+  /// In pt, this message translates to:
+  /// **'Termo'**
+  String get attachmentCategoryTerm;
+
+  /// No description provided for @attachmentCategoryReport.
+  ///
+  /// In pt, this message translates to:
+  /// **'Laudo'**
+  String get attachmentCategoryReport;
+
+  /// No description provided for @attachmentSend.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviar'**
+  String get attachmentSend;
+
+  /// No description provided for @attachmentUploading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Enviando arquivo… {percent}%'**
+  String attachmentUploading(int percent);
+
+  /// No description provided for @attachmentUploadSuccess.
+  ///
+  /// In pt, this message translates to:
+  /// **'Arquivo enviado!'**
+  String get attachmentUploadSuccess;
+
+  /// No description provided for @attachmentFileName.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nome do arquivo'**
+  String get attachmentFileName;
+
+  /// No description provided for @attachmentRename.
+  ///
+  /// In pt, this message translates to:
+  /// **'Renomear'**
+  String get attachmentRename;
+
+  /// No description provided for @attachmentRenameSuccess.
+  ///
+  /// In pt, this message translates to:
+  /// **'Arquivo renomeado!'**
+  String get attachmentRenameSuccess;
+
+  /// No description provided for @attachmentRemove.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover'**
+  String get attachmentRemove;
+
+  /// No description provided for @attachmentRemoveConfirmTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover arquivo'**
+  String get attachmentRemoveConfirmTitle;
+
+  /// No description provided for @attachmentRemoveConfirmMessage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover \"{name}\"? Essa ação não pode ser desfeita.'**
+  String attachmentRemoveConfirmMessage(String name);
+
+  /// No description provided for @attachmentRemoveSuccess.
+  ///
+  /// In pt, this message translates to:
+  /// **'Arquivo removido!'**
+  String get attachmentRemoveSuccess;
+
+  /// No description provided for @attachmentsFetchError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Erro ao carregar os arquivos do ativo.'**
+  String get attachmentsFetchError;
+
+  /// No description provided for @attachmentUploadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Erro ao enviar o arquivo.'**
+  String get attachmentUploadError;
+
+  /// No description provided for @attachmentDownloadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Erro ao baixar o arquivo.'**
+  String get attachmentDownloadError;
+
+  /// No description provided for @attachmentOpenError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível abrir o arquivo neste dispositivo.'**
+  String get attachmentOpenError;
+
+  /// No description provided for @attachmentRenameError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Erro ao renomear o arquivo.'**
+  String get attachmentRenameError;
+
+  /// No description provided for @attachmentRemoveError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Erro ao remover o arquivo.'**
+  String get attachmentRemoveError;
+
+  /// No description provided for @attachmentsUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Arquivos indisponíveis: o servidor não tem armazenamento configurado.'**
+  String get attachmentsUnavailable;
+
+  /// No description provided for @attachmentTooLarge.
+  ///
+  /// In pt, this message translates to:
+  /// **'O arquivo passa de 20 MB.'**
+  String get attachmentTooLarge;
+
+  /// No description provided for @attachmentPreparing.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preparando arquivo…'**
+  String get attachmentPreparing;
+
+  /// No description provided for @attachmentOpenExternal.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir em outro app'**
+  String get attachmentOpenExternal;
+
+  /// No description provided for @attachmentRendering.
+  ///
+  /// In pt, this message translates to:
+  /// **'Carregando páginas…'**
+  String get attachmentRendering;
 }
 
 class _AppLocalizationsDelegate
