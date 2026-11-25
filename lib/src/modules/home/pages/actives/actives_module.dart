@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/active_details_page.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/actives_page.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/add_or_edit_active_page.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/pages/attachment_viewer_page.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/move_active_page.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/write_off_active_page.dart';
 import 'package:iveco_find/src/shared/models/active_model.dart';
+import 'package:iveco_find/src/shared/models/attachment_model.dart';
 import 'package:iveco_find/src/shared/models/valid_movement_model.dart';
 
 final activiesModule = GoRoute(
@@ -39,6 +43,27 @@ final activiesModule = GoRoute(
       path: '/write-off-active',
       builder: (context, state) =>
           WriteOffActivePage(active: state.extra as ActiveModel),
+    ),
+    GoRoute(
+      name: 'attachment-viewer',
+      path: '/attachment-viewer',
+      // Sem o conteúdo em `extra` (recarga na web, voltar/avançar, link direto)
+      // não há o que mostrar: volta para a home.
+      redirect: (context, state) {
+        final extra = state.extra;
+        final valid =
+            extra is Map &&
+            extra['attachment'] is AttachmentModel &&
+            extra['bytes'] is Uint8List;
+        return valid ? null : '/home';
+      },
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return AttachmentViewerPage(
+          attachment: extra['attachment'] as AttachmentModel,
+          bytes: extra['bytes'] as Uint8List,
+        );
+      },
     ),
   ],
 );

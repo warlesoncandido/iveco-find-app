@@ -1765,6 +1765,18 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Preparando arquivo…'**
   String get attachmentPreparing;
+
+  /// No description provided for @attachmentOpenExternal.
+  ///
+  /// In pt, this message translates to:
+  /// **'Abrir em outro app'**
+  String get attachmentOpenExternal;
+
+  /// No description provided for @attachmentRendering.
+  ///
+  /// In pt, this message translates to:
+  /// **'Carregando páginas…'**
+  String get attachmentRendering;
 }
 
 class _AppLocalizationsDelegate

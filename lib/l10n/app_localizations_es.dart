@@ -921,4 +921,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attachmentPreparing => 'Preparando archivo…';
+
+  @override
+  String get attachmentOpenExternal => 'Abrir en otra app';
+
+  @override
+  String get attachmentRendering => 'Cargando páginas…';
 }

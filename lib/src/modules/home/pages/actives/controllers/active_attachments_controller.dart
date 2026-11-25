@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/shared/models/attachment_model.dart';
 import 'package:iveco_find/src/shared/repositories/attachment_repository.dart';
+import 'package:iveco_find/src/shared/services/attachment_cache/attachment_cache.dart';
 import 'package:iveco_find/src/shared/services/attachment_compressor.dart';
 import 'package:iveco_find/src/shared/services/attachment_opener/attachment_opener.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
@@ -24,18 +25,21 @@ class PickedAttachmentFile {
   });
 }
 
-/// Aba "Arquivos" da ficha do Ativo: lista, envia, abre, renomeia e remove Anexos.
+/// Aba "Arquivos" da ficha do Ativo: lista, envia, carrega para o visualizador,
+/// renomeia e remove Anexos.
 /// Quem decide se o usuário pode alterar é a ficha (`canEdit`: `ativos:escrever` e
 /// Ativo não Baixado); a API também recusa (403 / 422 `ATIVO_BAIXADO`).
 class ActiveAttachmentsController extends ChangeNotifier {
   final AttachmentRepository repository;
   final AttachmentOpener opener;
   final AttachmentCompressor compressor;
+  final AttachmentCache cache;
 
   ActiveAttachmentsController({
     required this.repository,
     required this.opener,
     required this.compressor,
+    required this.cache,
   });
 
   String? activeId;
@@ -58,7 +62,7 @@ class ActiveAttachmentsController extends ChangeNotifier {
   /// Preparando ou enviando: não aceita outro envio.
   bool get busy => preparing || uploading;
 
-  /// Anexo sendo baixado para abrir (mostra o indicador na linha).
+  /// Anexo sendo carregado para abrir (mostra o indicador na linha).
   String? openingId;
 
   Future<void> init(String id) async {
@@ -143,35 +147,74 @@ class ActiveAttachmentsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> open(
+  /// Conteúdo do Anexo para o visualizador: do cache local quando o tamanho bate
+  /// com `tamanhoBytes`; senão baixa uma vez e guarda no cache. `null` quando o
+  /// download falha (já avisado por [onError]) ou outro Anexo está carregando.
+  Future<Uint8List?> loadContent(
     AttachmentModel attachment, {
     required Function(String message) onError,
   }) async {
     final id = activeId;
-    if (id == null || openingId != null) return;
+    if (id == null || openingId != null) return null;
     openingId = attachment.id;
     notifyListeners();
-    final result = await repository.download(
-      activeId: id,
-      attachmentId: attachment.id,
-    );
     try {
-      await result.fold((l) async => onError(l.message ?? ''), (bytes) async {
-        try {
-          await opener.open(
-            attachment.id,
-            bytes,
-            attachment.nome,
-            attachment.tipoConteudo,
-          );
-        } catch (_) {
-          onError(L10n.current.attachmentOpenError);
-        }
-      });
+      final cached = await _cacheGet(attachment);
+      if (cached != null) return cached;
+      final result = await repository.download(
+        activeId: id,
+        attachmentId: attachment.id,
+      );
+      return await result.fold(
+        (l) async {
+          onError(l.message ?? L10n.current.attachmentDownloadError);
+          return null;
+        },
+        (bytes) async {
+          // Tamanho divergente nunca seria aceito pelo `get`: não vale gravar.
+          if (bytes.length == attachment.tamanhoBytes) {
+            await _cachePut(attachment.id, bytes);
+          }
+          return bytes;
+        },
+      );
     } finally {
       openingId = null;
       notifyListeners();
     }
+  }
+
+  /// "Abrir em outro app": entrega ao [opener] os bytes já carregados (sem baixar).
+  Future<void> openExternally(
+    AttachmentModel attachment,
+    Uint8List bytes, {
+    required Function(String message) onError,
+  }) async {
+    try {
+      await opener.open(
+        attachment.id,
+        bytes,
+        attachment.nome,
+        attachment.tipoConteudo,
+      );
+    } catch (_) {
+      onError(L10n.current.attachmentOpenError);
+    }
+  }
+
+  // O cache já não lança; o try/catch garante que uma falha nunca impeça abrir.
+  Future<Uint8List?> _cacheGet(AttachmentModel a) async {
+    try {
+      return await cache.get(a.id, a.tamanhoBytes);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _cachePut(String attachmentId, Uint8List bytes) async {
+    try {
+      await cache.put(attachmentId, bytes);
+    } catch (_) {}
   }
 
   Future<void> rename(
@@ -211,6 +254,12 @@ class ActiveAttachmentsController extends ChangeNotifier {
       activeId: id,
       attachmentId: attachment.id,
     );
+    // Removido na API: sai do cache mesmo que a ficha tenha mudado de Ativo.
+    if (result.isRight()) {
+      try {
+        await cache.remove(attachment.id);
+      } catch (_) {}
+    }
     if (id != activeId) return; // a ficha mudou de Ativo
     result.fold((l) => onError(l.message ?? ''), (_) {
       attachments = attachments.where((a) => a.id != attachment.id).toList();

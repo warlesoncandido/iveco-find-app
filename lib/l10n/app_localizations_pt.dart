@@ -918,4 +918,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get attachmentPreparing => 'Preparando arquivo…';
+
+  @override
+  String get attachmentOpenExternal => 'Abrir em outro app';
+
+  @override
+  String get attachmentRendering => 'Carregando páginas…';
 }

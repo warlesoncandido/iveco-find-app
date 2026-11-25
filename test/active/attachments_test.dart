@@ -1,18 +1,25 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
+import 'package:iveco_find/src/core/l10n/localized_app.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/actives_module.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_attachments_tab.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_attachments_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_details_controller.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/pages/active_details_page.dart';
+import 'package:iveco_find/src/modules/home/pages/actives/pages/attachment_viewer_page.dart';
 import 'package:iveco_find/src/shared/models/attachment_model.dart';
 import 'package:iveco_find/src/shared/repositories/attachment_repository.dart';
+import 'package:iveco_find/src/shared/services/attachment_cache/attachment_cache.dart';
 import 'package:iveco_find/src/shared/services/attachment_compressor.dart';
 import 'package:iveco_find/src/shared/services/attachment_opener/attachment_opener.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
@@ -41,7 +48,10 @@ AttachmentModel _model({
   String id = 'a1',
   String nome = 'NF 123.pdf',
   String tipo = 'application/pdf',
-}) => AttachmentModel.fromJson(_json(id: id, nome: nome, tipo: tipo));
+  int tamanho = 2048,
+}) => AttachmentModel.fromJson(
+  _json(id: id, nome: nome, tipo: tipo, tamanho: tamanho),
+);
 
 class _FakeRepository implements AttachmentRepository {
   List<AttachmentModel> items = [];
@@ -130,6 +140,40 @@ class _FakeOpener implements AttachmentOpener {
     opened.add((id, bytes.length, fileName, mimeType));
   }
 }
+
+/// Cache fake em memória: registra as chamadas; [failWrites] faz o `put` lançar.
+class _FakeCache implements AttachmentCache {
+  final entries = <String, Uint8List>{};
+  final removed = <String>[];
+  bool failWrites = false;
+
+  @override
+  Future<Uint8List?> get(String id, int expectedSize) async {
+    final bytes = entries[id];
+    return bytes != null && bytes.length == expectedSize ? bytes : null;
+  }
+
+  @override
+  Future<void> put(String id, Uint8List bytes) async {
+    if (failWrites) throw const _CacheWriteError();
+    entries[id] = bytes;
+  }
+
+  @override
+  Future<void> remove(String id) async {
+    removed.add(id);
+    entries.remove(id);
+  }
+}
+
+class _CacheWriteError implements Exception {
+  const _CacheWriteError();
+}
+
+/// PNG 1×1 válido.
+final _png = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+);
 
 /// Compactador fake: devolve [result] (ou o original) e registra as chamadas.
 class _FakeCompressor implements AttachmentCompressor {
@@ -265,16 +309,20 @@ void main() {
     late _FakeRepository repository;
     late _FakeOpener opener;
     late _FakeCompressor compressor;
+    late _FakeCache cache;
     late ActiveAttachmentsController controller;
 
     setUp(() {
-      repository = _FakeRepository()..items = [_model()];
+      // O download fake devolve 4 bytes: o tamanho do Anexo bate com ele.
+      repository = _FakeRepository()..items = [_model(tamanho: 4)];
       opener = _FakeOpener();
       compressor = _FakeCompressor();
+      cache = _FakeCache();
       controller = ActiveAttachmentsController(
         repository: repository,
         opener: opener,
         compressor: compressor,
+        cache: cache,
       );
     });
 
@@ -461,27 +509,100 @@ void main() {
       expect(controller.attachments.map((e) => e.id), ['a1']);
     });
 
-    test('abrir baixa e entrega ao opener com nome e MIME', () async {
+    test('primeira abertura baixa uma vez e guarda no cache', () async {
       await controller.init('x1');
-      await controller.open(
+      final bytes = await controller.loadContent(
+        controller.attachments.first,
+        onError: (_) => fail('x'),
+      );
+      expect(bytes, [0x25, 0x50, 0x44, 0x46]);
+      expect(repository.downloads, ['a1']);
+      expect(cache.entries['a1'], bytes);
+      expect(opener.opened, isEmpty);
+      expect(controller.openingId, isNull);
+    });
+
+    test('segunda abertura não chama o repositório', () async {
+      await controller.init('x1');
+      final a = controller.attachments.first;
+      await controller.loadContent(a, onError: (_) => fail('x'));
+      final again = await controller.loadContent(a, onError: (_) => fail('x'));
+      expect(again, [0x25, 0x50, 0x44, 0x46]);
+      expect(repository.downloads, ['a1']);
+    });
+
+    test('cache com tamanho divergente baixa de novo e substitui', () async {
+      await controller.init('x1');
+      cache.entries['a1'] = Uint8List.fromList([1, 2, 3]);
+      final bytes = await controller.loadContent(
         controller.attachments.first,
         onError: (_) => fail('x'),
       );
       expect(repository.downloads, ['a1']);
-      expect(opener.opened.single, ('a1', 4, 'NF 123.pdf', 'application/pdf'));
+      expect(bytes, hasLength(4));
+      expect(cache.entries['a1'], hasLength(4));
+    });
+
+    test(
+      'download com tamanho diferente de tamanhoBytes não vai ao cache',
+      () async {
+        repository.items = [_model(tamanho: 2048)];
+        await controller.init('x1');
+        final bytes = await controller.loadContent(
+          controller.attachments.first,
+          onError: (_) => fail('x'),
+        );
+        expect(bytes, [0x25, 0x50, 0x44, 0x46]);
+        expect(cache.entries, isEmpty);
+      },
+    );
+
+    test('falha ao gravar no cache não impede abrir', () async {
+      await controller.init('x1');
+      cache.failWrites = true;
+      final bytes = await controller.loadContent(
+        controller.attachments.first,
+        onError: (_) => fail('x'),
+      );
+      expect(bytes, hasLength(4));
       expect(controller.openingId, isNull);
     });
 
-    test('abrir sem app compatível avisa o erro', () async {
+    test('falha no download avisa o erro e não devolve conteúdo', () async {
       await controller.init('x1');
-      opener.fail = true;
+      repository.failure = Failure(message: 'Erro ao baixar o arquivo.');
       String? error;
-      await controller.open(
+      final bytes = await controller.loadContent(
         controller.attachments.first,
         onError: (m) => error = m,
       );
-      expect(error, isNotNull);
+      expect(bytes, isNull);
+      expect(error, 'Erro ao baixar o arquivo.');
+      expect(cache.entries, isEmpty);
       expect(controller.openingId, isNull);
+    });
+
+    test('abrir em outro app entrega os mesmos bytes ao opener', () async {
+      await controller.init('x1');
+      await controller.openExternally(
+        controller.attachments.first,
+        Uint8List(7),
+        onError: (_) => fail('x'),
+      );
+      expect(opener.opened.single, ('a1', 7, 'NF 123.pdf', 'application/pdf'));
+      expect(repository.downloads, isEmpty);
+    });
+
+    test('abrir em outro app sem app compatível avisa o erro', () async {
+      await controller.init('x1');
+      opener.fail = true;
+      String? error;
+      await controller.openExternally(
+        controller.attachments.first,
+        Uint8List(4),
+        onError: (m) => error = m,
+      );
+      expect(error, L10n.current.attachmentOpenError);
     });
 
     test(
@@ -556,27 +677,57 @@ void main() {
       expect(repository.removes, ['a1']);
       expect(controller.attachments, isEmpty);
     });
+
+    test('remover apaga a entrada do cache', () async {
+      await controller.init('x1');
+      final a = controller.attachments.first;
+      await controller.loadContent(a, onError: (_) => fail('x'));
+      expect(cache.entries, contains('a1'));
+      await controller.remove(a, onSuccess: () {}, onError: (_) => fail('x'));
+      expect(cache.removed, ['a1']);
+      expect(cache.entries, isEmpty);
+    });
+
+    test('remoção recusada pela API mantém o cache', () async {
+      await controller.init('x1');
+      cache.entries['a1'] = Uint8List(4);
+      repository.failure = Failure(message: 'Ativo Baixado');
+      await controller.remove(
+        controller.attachments.first,
+        onSuccess: () => fail('x'),
+        onError: (_) {},
+      );
+      expect(cache.removed, isEmpty);
+      expect(cache.entries, contains('a1'));
+    });
   });
 
   group('ActiveAttachmentsTab', () {
     late ActiveAttachmentsController controller;
+    late List<(String, int)> viewed;
 
     setUp(() async {
+      viewed = [];
       controller = ActiveAttachmentsController(
         repository: _FakeRepository()
           ..items = [
-            _model(),
+            _model(tamanho: 4),
             _model(id: 'a2', nome: 'foto.png', tipo: 'image/png'),
           ],
         opener: _FakeOpener(),
         compressor: _FakeCompressor(),
+        cache: _FakeCache(),
       );
       await controller.init('x1');
     });
 
     Widget app(bool canEdit) => localizedApp(
       home: Scaffold(
-        body: ActiveAttachmentsTab(controller: controller, canEdit: canEdit),
+        body: ActiveAttachmentsTab(
+          controller: controller,
+          canEdit: canEdit,
+          openViewer: (context, a, bytes) => viewed.add((a.id, bytes.length)),
+        ),
       ),
     );
 
@@ -601,7 +752,8 @@ void main() {
       expect(find.byKey(const Key('attachment-menu-a1')), findsNothing);
       await tester.tap(find.text('NF 123.pdf'));
       await tester.pumpAndSettle();
-      expect((controller.opener as _FakeOpener).opened, hasLength(1));
+      expect(viewed, [('a1', 4)]);
+      expect((controller.opener as _FakeOpener).opened, isEmpty);
     });
 
     testWidgets('preparando mostra a barra indeterminada e trava o FAB', (
@@ -621,6 +773,253 @@ void main() {
       controller.attachments = [];
       await tester.pumpWidget(app(true));
       expect(find.text('Nenhum arquivo anexado.'), findsOneWidget);
+    });
+
+    group('rota attachment-viewer', () {
+      final viewerRoute = activiesModule.routes.whereType<GoRoute>().firstWhere(
+        (r) => r.name == 'attachment-viewer',
+      );
+      late GoRouter router;
+
+      setUp(() {
+        GetIt.instance.registerSingleton<ActiveAttachmentsController>(
+          controller,
+        );
+        router = GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => Scaffold(
+                body: ActiveAttachmentsTab(
+                  controller: controller,
+                  canEdit: false,
+                ),
+              ),
+            ),
+            GoRoute(
+              path: '/home',
+              builder: (context, state) =>
+                  const Scaffold(body: Text('home-fake')),
+            ),
+            viewerRoute,
+          ],
+        );
+      });
+
+      tearDown(() async {
+        router.dispose();
+        await GetIt.instance.reset();
+      });
+
+      Widget routerApp() => MaterialApp.router(
+        locale: const Locale('pt'),
+        supportedLocales: LocaleController.supportedLocales,
+        localizationsDelegates: LocalizedApp.localizationsDelegates,
+        routerConfig: router,
+      );
+
+      testWidgets('tocar no Anexo abre o visualizador com os bytes', (
+        tester,
+      ) async {
+        await tester.pumpWidget(routerApp());
+        await tester.tap(find.text('NF 123.pdf'));
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        final page = tester.widget<AttachmentViewerPage>(
+          find.byType(AttachmentViewerPage),
+        );
+        expect(page.attachment.id, 'a1');
+        expect(page.bytes, [0x25, 0x50, 0x44, 0x46]);
+      });
+
+      testWidgets('sem extra (recarga/link direto) volta para a home', (
+        tester,
+      ) async {
+        await tester.pumpWidget(routerApp());
+        router.go('/attachment-viewer');
+        await tester.pumpAndSettle();
+        expect(find.byType(AttachmentViewerPage), findsNothing);
+        expect(find.text('home-fake'), findsOneWidget);
+      });
+    });
+  });
+
+  group('AttachmentViewerPage', () {
+    late _FakeOpener opener;
+    late ActiveAttachmentsController controller;
+
+    setUp(() {
+      opener = _FakeOpener();
+      controller = ActiveAttachmentsController(
+        repository: _FakeRepository(),
+        opener: opener,
+        compressor: _FakeCompressor(),
+        cache: _FakeCache(),
+      );
+    });
+
+    testWidgets('imagem com zoom; "Abrir em outro app" usa os mesmos bytes', (
+      tester,
+    ) async {
+      final a = _model(id: 'a2', nome: 'foto.png', tipo: 'image/png');
+      await tester.pumpWidget(
+        localizedApp(
+          home: AttachmentViewerPage(
+            attachment: a,
+            bytes: _png,
+            controller: controller,
+          ),
+        ),
+      );
+      expect(find.text('foto.png'), findsOneWidget);
+      final viewer = tester.widget<InteractiveViewer>(
+        find.byKey(const Key('attachment-viewer-image')),
+      );
+      expect(viewer.maxScale, 5);
+      expect(find.byType(Image), findsOneWidget);
+      expect(find.byTooltip('Abrir em outro app'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('attachment-open-external')));
+      await tester.pump();
+      expect(opener.opened.single, (
+        'a2',
+        _png.length,
+        'foto.png',
+        'image/png',
+      ));
+    });
+
+    testWidgets('imagem inválida mostra a mensagem de erro', (tester) async {
+      final a = _model(id: 'a2', nome: 'foto.png', tipo: 'image/png');
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          localizedApp(
+            home: AttachmentViewerPage(
+              attachment: a,
+              bytes: Uint8List.fromList([1, 2, 3]),
+              controller: controller,
+            ),
+          ),
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      await tester.pump();
+      expect(find.text(L10n.current.attachmentOpenError), findsOneWidget);
+      await tester.tap(find.byKey(const Key('attachment-error-open-external')));
+      await tester.pump();
+      expect(opener.opened.single, ('a2', 3, 'foto.png', 'image/png'));
+    });
+
+    group('PDF', () {
+      late StreamController<Uint8List> pages;
+      final pdf = Uint8List.fromList([0x25, 0x50, 0x44, 0x46, 0x2D]);
+
+      final dpis = <double>[];
+
+      setUp(() {
+        pages = StreamController<Uint8List>();
+        dpis.clear();
+      });
+      // Sem `await`: o `done` só é entregue dentro do pump do teste.
+      tearDown(() {
+        pages.close();
+      });
+
+      Widget viewer() => localizedApp(
+        home: AttachmentViewerPage(
+          attachment: _model(tamanho: pdf.length),
+          bytes: pdf,
+          controller: controller,
+          pdfRenderer: (bytes, dpi) {
+            expect(bytes, same(pdf));
+            dpis.add(dpi);
+            return pages.stream;
+          },
+        ),
+      );
+
+      testWidgets('primeira página aparece antes das demais', (tester) async {
+        await tester.pumpWidget(viewer());
+        expect(find.text('Carregando páginas…'), findsOneWidget);
+        expect(find.byKey(const Key('attachment-viewer-pdf')), findsNothing);
+
+        pages.add(_png); // 1ª página; o stream continua aberto
+        await tester.pump();
+        expect(find.byKey(const Key('attachment-viewer-pdf')), findsOneWidget);
+        expect(find.byType(Image), findsOneWidget);
+        expect(find.text('Carregando páginas…'), findsOneWidget);
+
+        pages.add(_png);
+        unawaited(pages.close());
+        await tester.pump();
+        // A 2ª página pode estar abaixo da área visível (lista preguiçosa).
+        final list = tester.widget<ListView>(find.byType(ListView));
+        expect(
+          (list.childrenDelegate as SliverChildBuilderDelegate).childCount,
+          2,
+        );
+        expect(find.text('Carregando páginas…'), findsNothing);
+      });
+
+      testWidgets('erro depois de páginas: mantém as páginas e avisa', (
+        tester,
+      ) async {
+        await tester.pumpWidget(viewer());
+        pages.add(_png);
+        await tester.pump();
+        pages.addError(Exception('página corrompida'));
+        await tester.pump();
+        expect(find.byType(Image), findsOneWidget);
+        expect(find.text(L10n.current.attachmentOpenError), findsOneWidget);
+        expect(find.text('Carregando páginas…'), findsNothing);
+      });
+
+      testWidgets('dpi: 800 de largura a 1× ≈ 193,5; tela densa = 200', (
+        tester,
+      ) async {
+        addTearDown(tester.view.reset);
+        tester.view.physicalSize = const Size(800, 600);
+        tester.view.devicePixelRatio = 1;
+        await tester.pumpWidget(viewer());
+        expect(dpis.single, closeTo(800 * 2 / 8.27, 0.01));
+
+        await tester.pumpWidget(const SizedBox());
+        pages = StreamController<Uint8List>(); // stream de assinatura única
+        tester.view.physicalSize = const Size(1800, 3600); // 600 lógicos a 3×
+        tester.view.devicePixelRatio = 3;
+        await tester.pumpWidget(viewer());
+        expect(dpis.last, 200);
+
+        await tester.pumpWidget(const SizedBox());
+        pages = StreamController<Uint8List>(); // stream de assinatura única
+        tester.view.physicalSize = const Size(2400, 1200); // 2400 lógicos a 1×
+        tester.view.devicePixelRatio = 1;
+        await tester.pumpWidget(viewer());
+        expect(dpis.last, 200);
+      });
+
+      testWidgets(
+        'PDF que não renderiza: erro e "Abrir em outro app" com os mesmos bytes',
+        (tester) async {
+          await tester.pumpWidget(viewer());
+          pages.addError(Exception('PDF inválido'));
+          await tester.pump();
+          expect(find.text(L10n.current.attachmentOpenError), findsOneWidget);
+          final button = find.byKey(
+            const Key('attachment-error-open-external'),
+          );
+          expect(button, findsOneWidget);
+
+          await tester.tap(button);
+          await tester.pump();
+          expect(opener.opened.single, (
+            'a1',
+            pdf.length,
+            'NF 123.pdf',
+            'application/pdf',
+          ));
+        },
+      );
     });
   });
 }

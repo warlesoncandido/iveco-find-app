@@ -416,5 +416,7 @@
   "attachmentRemoveError": "Erro ao remover o arquivo.",
   "attachmentsUnavailable": "Arquivos indisponíveis: o servidor não tem armazenamento configurado.",
   "attachmentTooLarge": "O arquivo passa de 20 MB.",
-  "attachmentPreparing": "Preparando arquivo…"
+  "attachmentPreparing": "Preparando arquivo…",
+  "attachmentOpenExternal": "Abrir em outro app",
+  "attachmentRendering": "Carregando páginas…"
 }

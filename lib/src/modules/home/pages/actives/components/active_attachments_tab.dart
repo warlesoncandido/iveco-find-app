@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iveco_find/l10n/app_localizations.dart';
@@ -19,10 +22,20 @@ class ActiveAttachmentsTab extends StatelessWidget {
   final ActiveAttachmentsController controller;
   final bool canEdit;
 
+  /// Abre o visualizador com o conteúdo carregado. Padrão: rota
+  /// `attachment-viewer` (testes trocam para não depender do GoRouter).
+  final void Function(
+    BuildContext context,
+    AttachmentModel attachment,
+    Uint8List bytes,
+  )?
+  openViewer;
+
   const ActiveAttachmentsTab({
     super.key,
     required this.controller,
     required this.canEdit,
+    this.openViewer,
   });
 
   /// Câmera só no app Android/iOS (na web, o seletor de arquivos basta).
@@ -293,12 +306,22 @@ class ActiveAttachmentsTab extends StatelessWidget {
   }
 
   Future<void> _open(BuildContext context, AttachmentModel a) async {
-    await controller.open(
+    final bytes = await controller.loadContent(
       a,
       onError: (message) {
         if (context.mounted) SnackbarUtil.showError(context, message: message);
       },
     );
+    if (bytes == null || !context.mounted) return;
+    final open = openViewer;
+    if (open != null) {
+      open(context, a, bytes);
+    } else {
+      context.pushNamed(
+        'attachment-viewer',
+        extra: {'attachment': a, 'bytes': bytes},
+      );
+    }
   }
 
   Future<void> _rename(BuildContext context, AttachmentModel a) async {
