@@ -137,11 +137,22 @@ class _ActiveDetailsPageState extends State<ActiveDetailsPage> {
             appBar: AppBar(
               title: Text(l.activeDetailsTitle),
               bottom: loaded
-                  ? TabBar(
-                      tabs: [
-                        Tab(text: l.activeTabDetails),
-                        Tab(text: l.activeTabFiles),
-                      ],
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(kTextTabBarHeight),
+                      child: ColoredBox(
+                        color: ITheme.colors.branco,
+                        child: TabBar(
+                          labelColor: ITheme.colors.textColor,
+                          unselectedLabelColor: ITheme.colors.textColor
+                              .withValues(alpha: 0.6),
+                          indicatorColor: ITheme.colors.textColor,
+                          dividerColor: ITheme.colors.cinza225,
+                          tabs: [
+                            Tab(text: l.activeTabDetails),
+                            Tab(text: l.activeTabFiles),
+                          ],
+                        ),
+                      ),
                     )
                   : null,
               actions: [
