@@ -6,7 +6,11 @@ void main() {
 
   test('usa PUBLIC_URL quando definida', () {
     expect(
-      PublicUrl.ativo(id, publicUrl: 'https://find.exemplo.com', baseUrl: 'http://10.0.2.2:3000'),
+      PublicUrl.ativo(
+        id,
+        publicUrl: 'https://find.exemplo.com',
+        baseUrl: 'http://10.0.2.2:3000',
+      ),
       'https://find.exemplo.com/a/$id',
     );
   });
