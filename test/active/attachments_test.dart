@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/core/services/dio_client.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/components/active_attachments_tab.dart';
 import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_attachments_controller.dart';
@@ -12,6 +13,7 @@ import 'package:iveco_find/src/modules/home/pages/actives/controllers/active_det
 import 'package:iveco_find/src/modules/home/pages/actives/pages/active_details_page.dart';
 import 'package:iveco_find/src/shared/models/attachment_model.dart';
 import 'package:iveco_find/src/shared/repositories/attachment_repository.dart';
+import 'package:iveco_find/src/shared/services/attachment_compressor.dart';
 import 'package:iveco_find/src/shared/services/attachment_opener/attachment_opener.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
 import 'package:iveco_find/src/shared/utils/failure.dart';
@@ -126,6 +128,22 @@ class _FakeOpener implements AttachmentOpener {
   ) async {
     if (fail) throw Exception('sem app');
     opened.add((id, bytes.length, fileName, mimeType));
+  }
+}
+
+/// Compactador fake: devolve [result] (ou o original) e registra as chamadas.
+class _FakeCompressor implements AttachmentCompressor {
+  final calls = <String>[];
+  Uint8List? result;
+
+  /// Se definido, a compactação só termina quando ele completar.
+  Completer<void>? gate;
+
+  @override
+  Future<Uint8List> compress(Uint8List bytes, String fileName) async {
+    calls.add(fileName);
+    if (gate != null) await gate!.future;
+    return result ?? bytes;
   }
 }
 
@@ -246,14 +264,17 @@ void main() {
   group('ActiveAttachmentsController', () {
     late _FakeRepository repository;
     late _FakeOpener opener;
+    late _FakeCompressor compressor;
     late ActiveAttachmentsController controller;
 
     setUp(() {
       repository = _FakeRepository()..items = [_model()];
       opener = _FakeOpener();
+      compressor = _FakeCompressor();
       controller = ActiveAttachmentsController(
         repository: repository,
         opener: opener,
+        compressor: compressor,
       );
     });
 
@@ -310,6 +331,117 @@ void main() {
       );
       expect(error, contains('20 MB'));
       expect(repository.uploads, isEmpty);
+    });
+
+    test('JPEG acima de 20 MB que compacta para menos é enviado', () async {
+      await controller.init('x1');
+      compressor.result = Uint8List(4 * 1024 * 1024);
+      final preparing = <bool>[];
+      controller.addListener(() => preparing.add(controller.preparing));
+      var ok = false;
+      await controller.upload(
+        PickedAttachmentFile(
+          bytes: Uint8List(25 * 1024 * 1024),
+          name: 'grande.jpg',
+        ),
+        AttachmentCategory.foto,
+        onSuccess: () => ok = true,
+        onError: (m) => fail('não deveria falhar: $m'),
+      );
+      expect(ok, isTrue);
+      expect(compressor.calls, ['grande.jpg']);
+      expect(repository.uploads.single.$4, 4 * 1024 * 1024);
+      expect(preparing.first, isTrue);
+      expect(controller.preparing, isFalse);
+    });
+
+    test(
+      'imagem que continua acima de 20 MB após compactar não envia',
+      () async {
+        await controller.init('x1');
+        compressor.result = Uint8List(AttachmentModel.maxBytes + 1);
+        final preparing = <bool>[];
+        controller.addListener(() => preparing.add(controller.preparing));
+        String? error;
+        await controller.upload(
+          PickedAttachmentFile(
+            bytes: Uint8List(AttachmentModel.maxBytes + 10),
+            name: 'enorme.jpg',
+          ),
+          AttachmentCategory.foto,
+          onSuccess: () => fail('não deveria enviar'),
+          onError: (m) => error = m,
+        );
+        expect(error, L10n.current.attachmentTooLarge);
+        expect(repository.uploads, isEmpty);
+        expect(preparing, isNotEmpty);
+        expect(preparing.last, isFalse);
+      },
+    );
+
+    test('segundo envio durante a compactação é ignorado', () async {
+      await controller.init('x1');
+      final gate = compressor.gate = Completer<void>();
+      final file = PickedAttachmentFile(
+        bytes: Uint8List.fromList([1, 2]),
+        name: 'foto.jpg',
+      );
+      final first = controller.upload(
+        file,
+        AttachmentCategory.foto,
+        onSuccess: () {},
+        onError: (m) => fail('não deveria falhar: $m'),
+      );
+      expect(controller.preparing, isTrue);
+      await controller.upload(
+        file,
+        AttachmentCategory.foto,
+        onSuccess: () => fail('não deveria enviar'),
+        onError: (m) => fail('não deveria falhar: $m'),
+      );
+      gate.complete();
+      await first;
+      expect(compressor.calls, hasLength(1));
+      expect(repository.uploads, hasLength(1));
+    });
+
+    test('trocar de Ativo durante a compactação descarta o envio', () async {
+      await controller.init('x1');
+      final gate = compressor.gate = Completer<void>();
+      var callbacks = 0;
+      final upload = controller.upload(
+        PickedAttachmentFile(
+          bytes: Uint8List.fromList([1, 2]),
+          name: 'foto.jpg',
+        ),
+        AttachmentCategory.foto,
+        onSuccess: () => callbacks++,
+        onError: (_) => callbacks++,
+      );
+      await controller.init('x2');
+      gate.complete();
+      await upload;
+      expect(repository.uploads, isEmpty);
+      expect(callbacks, 0);
+      expect(controller.preparing, isFalse);
+    });
+
+    test('foto da câmera não é recompactada', () async {
+      await controller.init('x1');
+      compressor.result = Uint8List(1);
+      final photo = Uint8List.fromList(List.generate(10, (i) => i));
+      await controller.upload(
+        PickedAttachmentFile(
+          bytes: photo,
+          name: 'foto_1.jpg',
+          compressed: true,
+        ),
+        AttachmentCategory.foto,
+        onSuccess: () {},
+        onError: (m) => fail('não deveria falhar: $m'),
+      );
+      expect(compressor.calls, isEmpty);
+      expect(repository.uploads.single.$4, 10);
     });
 
     test('envio com erro da API repassa a mensagem', () async {
@@ -437,6 +569,7 @@ void main() {
             _model(id: 'a2', nome: 'foto.png', tipo: 'image/png'),
           ],
         opener: _FakeOpener(),
+        compressor: _FakeCompressor(),
       );
       await controller.init('x1');
     });
@@ -469,6 +602,19 @@ void main() {
       await tester.tap(find.text('NF 123.pdf'));
       await tester.pumpAndSettle();
       expect((controller.opener as _FakeOpener).opened, hasLength(1));
+    });
+
+    testWidgets('preparando mostra a barra indeterminada e trava o FAB', (
+      tester,
+    ) async {
+      controller.preparing = true;
+      await tester.pumpWidget(app(true));
+      expect(find.text('Preparando arquivo…'), findsOneWidget);
+      expect(find.byKey(const Key('attachment-preparing')), findsOneWidget);
+      final fab = tester.widget<FloatingActionButton>(
+        find.byKey(const Key('attachment-add')),
+      );
+      expect(fab.onPressed, isNull);
     });
 
     testWidgets('lista vazia mostra a mensagem', (tester) async {

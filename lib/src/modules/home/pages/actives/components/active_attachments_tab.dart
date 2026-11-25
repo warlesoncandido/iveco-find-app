@@ -35,22 +35,44 @@ class ActiveAttachmentsTab extends StatelessWidget {
       listenable: controller,
       builder: (context, _) {
         final l = AppLocalizations.of(context)!;
-        return switch (controller.behaviour) {
-          Behaviour.loading => const Center(child: CircularProgressIndicator()),
-          Behaviour.error =>
-            controller.loadError != null
-                ? _Message(
-                    text: controller.loadError!,
-                    action: TextButton(
-                      onPressed: controller.load,
-                      child: Text(l.commonRetry),
-                    ),
-                  )
-                : ErrorPage(onRetry: controller.load),
-          Behaviour.success => _buildList(context, l),
-        };
+        // Scaffold interno só para o FAB ficar fixo sobre a aba "Arquivos".
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton:
+              canEdit && controller.behaviour == Behaviour.success
+              ? FloatingActionButton.extended(
+                  key: const Key('attachment-add'),
+                  heroTag: 'attachment-add',
+                  backgroundColor: controller.busy
+                      ? ITheme.colors.cinza145
+                      : ITheme.colors.primary,
+                  foregroundColor: ITheme.colors.branco,
+                  onPressed: controller.busy ? null : () => _add(context),
+                  icon: const Icon(Icons.upload_file),
+                  label: Text(l.attachmentAdd),
+                )
+              : null,
+          body: _buildContent(context, l),
+        );
       },
     );
+  }
+
+  Widget _buildContent(BuildContext context, AppLocalizations l) {
+    return switch (controller.behaviour) {
+      Behaviour.loading => const Center(child: CircularProgressIndicator()),
+      Behaviour.error =>
+        controller.loadError != null
+            ? _Message(
+                text: controller.loadError!,
+                action: TextButton(
+                  onPressed: controller.load,
+                  child: Text(l.commonRetry),
+                ),
+              )
+            : ErrorPage(onRetry: controller.load),
+      Behaviour.success => _buildList(context, l),
+    };
   }
 
   Widget _buildList(BuildContext context, AppLocalizations l) {
@@ -58,23 +80,15 @@ class ActiveAttachmentsTab extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: controller.load,
       child: ListView(
-        padding: EdgeInsets.all(md),
+        // Espaço no fim para o FAB não cobrir o último Anexo.
+        padding: EdgeInsets.fromLTRB(md, md, md, md + 72),
         children: [
-          if (canEdit)
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                key: const Key('attachment-add'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: ITheme.colors.primary,
-                ),
-                onPressed: controller.uploading ? null : () => _add(context),
-                icon: const Icon(Icons.upload_file),
-                label: Text(l.attachmentAdd),
-              ),
-            ),
+          if (controller.preparing) ...[
+            Text(l.attachmentPreparing, style: ITheme.styles.bodyLight()),
+            SizedBox(height: xs),
+            const LinearProgressIndicator(key: Key('attachment-preparing')),
+          ],
           if (controller.uploading) ...[
-            SizedBox(height: sm),
             Text(
               l.attachmentUploading(
                 ((controller.uploadProgress ?? 0) * 100).round(),
@@ -206,7 +220,8 @@ class ActiveAttachmentsTab extends StatelessWidget {
     return PickedAttachmentFile(bytes: bytes, name: picked.name);
   }
 
-  /// Foto em JPG (a qualidade < 100 faz o image_picker comprimir em JPEG).
+  /// Foto em JPG (a qualidade < 100 faz o image_picker comprimir em JPEG). Já sai
+  /// reduzida: `compressed` evita compactar de novo.
   Future<PickedAttachmentFile?> _takePhoto() async {
     final photo = await ImagePicker().pickImage(
       source: ImageSource.camera,
@@ -217,7 +232,11 @@ class ActiveAttachmentsTab extends StatelessWidget {
     if (photo == null) return null;
     final name =
         'foto_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.jpg';
-    return PickedAttachmentFile(bytes: await photo.readAsBytes(), name: name);
+    return PickedAttachmentFile(
+      bytes: await photo.readAsBytes(),
+      name: name,
+      compressed: true,
+    );
   }
 
   Future<AttachmentCategory?> _askCategory(

@@ -1759,6 +1759,12 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'O arquivo passa de 20 MB.'**
   String get attachmentTooLarge;
+
+  /// No description provided for @attachmentPreparing.
+  ///
+  /// In pt, this message translates to:
+  /// **'Preparando arquivo…'**
+  String get attachmentPreparing;
 }
 
 class _AppLocalizationsDelegate

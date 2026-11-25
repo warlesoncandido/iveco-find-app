@@ -415,5 +415,6 @@
   "attachmentRenameError": "Erro ao renomear o arquivo.",
   "attachmentRemoveError": "Erro ao remover o arquivo.",
   "attachmentsUnavailable": "Arquivos indisponíveis: o servidor não tem armazenamento configurado.",
-  "attachmentTooLarge": "O arquivo passa de 20 MB."
+  "attachmentTooLarge": "O arquivo passa de 20 MB.",
+  "attachmentPreparing": "Preparando arquivo…"
 }

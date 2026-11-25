@@ -918,4 +918,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attachmentTooLarge => 'El archivo supera los 20 MB.';
+
+  @override
+  String get attachmentPreparing => 'Preparando archivo…';
 }

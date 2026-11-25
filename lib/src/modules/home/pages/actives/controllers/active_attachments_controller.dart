@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iveco_find/src/core/l10n/locale_controller.dart';
 import 'package:iveco_find/src/shared/models/attachment_model.dart';
 import 'package:iveco_find/src/shared/repositories/attachment_repository.dart';
+import 'package:iveco_find/src/shared/services/attachment_compressor.dart';
 import 'package:iveco_find/src/shared/services/attachment_opener/attachment_opener.dart';
 import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
 
@@ -11,7 +12,16 @@ import 'package:iveco_find/src/shared/utils/behaviour_page.dart';
 class PickedAttachmentFile {
   final Uint8List bytes;
   final String name;
-  PickedAttachmentFile({required this.bytes, required this.name});
+
+  /// Já sai reduzido de quem gerou (foto da câmera via `image_picker`): não
+  /// passa de novo pelo [AttachmentCompressor].
+  final bool compressed;
+
+  PickedAttachmentFile({
+    required this.bytes,
+    required this.name,
+    this.compressed = false,
+  });
 }
 
 /// Aba "Arquivos" da ficha do Ativo: lista, envia, abre, renomeia e remove Anexos.
@@ -20,8 +30,13 @@ class PickedAttachmentFile {
 class ActiveAttachmentsController extends ChangeNotifier {
   final AttachmentRepository repository;
   final AttachmentOpener opener;
+  final AttachmentCompressor compressor;
 
-  ActiveAttachmentsController({required this.repository, required this.opener});
+  ActiveAttachmentsController({
+    required this.repository,
+    required this.opener,
+    required this.compressor,
+  });
 
   String? activeId;
 
@@ -37,6 +52,12 @@ class ActiveAttachmentsController extends ChangeNotifier {
 
   bool get uploading => uploadProgress != null;
 
+  /// Compactando o arquivo antes do envio (barra indeterminada na aba).
+  bool preparing = false;
+
+  /// Preparando ou enviando: não aceita outro envio.
+  bool get busy => preparing || uploading;
+
   /// Anexo sendo baixado para abrir (mostra o indicador na linha).
   String? openingId;
 
@@ -44,6 +65,7 @@ class ActiveAttachmentsController extends ChangeNotifier {
     activeId = id;
     attachments = [];
     uploadProgress = null;
+    preparing = false;
     openingId = null;
     await load();
   }
@@ -76,20 +98,32 @@ class ActiveAttachmentsController extends ChangeNotifier {
     required Function(String message) onError,
   }) async {
     final id = activeId;
-    if (id == null || uploading) return;
-    if (file.bytes.length > AttachmentModel.maxBytes) {
-      onError(L10n.current.attachmentTooLarge);
-      return;
-    }
+    if (id == null || busy) return;
     if (file.bytes.isEmpty) {
       onError(L10n.current.attachmentUploadError);
+      return;
+    }
+    var bytes = file.bytes;
+    if (!file.compressed) {
+      preparing = true;
+      notifyListeners();
+      // Melhor esforço: o compactador devolve o original se falhar ou não reduzir.
+      bytes = await compressor.compress(file.bytes, file.name);
+      // A ficha mudou de Ativo: `init` já zerou o estado.
+      if (id != activeId) return;
+      preparing = false;
+    }
+    // O limite de 20 MB vale para o que vai de fato ser enviado (já compactado).
+    if (bytes.length > AttachmentModel.maxBytes) {
+      notifyListeners();
+      onError(L10n.current.attachmentTooLarge);
       return;
     }
     uploadProgress = 0;
     notifyListeners();
     final result = await repository.upload(
       activeId: id,
-      bytes: file.bytes,
+      bytes: bytes,
       fileName: file.name,
       category: category,
       onProgress: (p) {

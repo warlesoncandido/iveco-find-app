@@ -26,6 +26,7 @@ import 'package:iveco_find/src/modules/home/pages/user/controllers/user_controll
 import 'package:iveco_find/src/shared/repositories/active_repository.dart';
 import 'package:iveco_find/src/shared/repositories/attachment_repository.dart';
 import 'package:iveco_find/src/shared/services/attachment_opener/attachment_opener.dart';
+import 'package:iveco_find/src/shared/services/attachment_compressor.dart';
 import 'package:iveco_find/src/shared/repositories/auth_repository.dart';
 import 'package:iveco_find/src/shared/repositories/category_repository.dart';
 import 'package:iveco_find/src/shared/repositories/dashboard_repository.dart';
@@ -175,6 +176,7 @@ class Injections {
       ActiveAttachmentsController(
         repository: GetIt.instance.get<AttachmentRepository>(),
         opener: PlatformAttachmentOpener(),
+        compressor: const AttachmentCompressor(),
       ),
     );
     GetIt.instance.registerSingleton<MoveActiveController>(

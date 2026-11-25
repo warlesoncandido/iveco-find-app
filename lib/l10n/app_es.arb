@@ -276,5 +276,6 @@
   "attachmentRenameError": "Error al renombrar el archivo.",
   "attachmentRemoveError": "Error al eliminar el archivo.",
   "attachmentsUnavailable": "Archivos no disponibles: el servidor no tiene almacenamiento configurado.",
-  "attachmentTooLarge": "El archivo supera los 20 MB."
+  "attachmentTooLarge": "El archivo supera los 20 MB.",
+  "attachmentPreparing": "Preparando archivo…"
 }
